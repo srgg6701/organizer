@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pure JS greets you!</title>
+    <script>
+        /*String.prototype.repeatify = function(num){
+            var str=this.toString(), newStr;
+            while(num){
+                str+=this.toString();
+                num--;
+            }
+            return str;
+        };*/
+        //console.log('hello'.repeatify(3));
+        /*var fullname = 'John Doe';
+        var obj = {
+            fullname: 'Colin Ihrig',
+            prop: {
+                fullname: 'Aurelio De Rosa',
+                getFullname: function() {
+                    return this.fullname;
+                }
+            }
+        };*/
+        //console.log(obj.prop.getFullname());
+        //var test = obj.prop.getFullname;
+        //console.log(test.call(obj.prop));
+        /*function outerFunc(){
+            var greet = 'Hello!';
+            function innerFunc(){
+                console.log('greet, level1', greet);
+                function deepInner(){
+                    console.log('greet, leve2', greet);
+                }
+                deepInner();
+            }
+            innerFunc();
+        }
+        outerFunc();*/
+        /*function mul (x) {
+            return function (y) { // anonymous function
+                return function (z) { // anonymous function
+                    return x * y * z;
+                };
+            };
+        }*/
+        //console.log(mul(2)(3)(4));
+        // output : 24 console.log(mul(4)(3)(4)); // output : 48
+        var arrayList =  ['a','b','c','d','e','f'];
+
+        var CC = arrayList[2];
+
+        console.log({arrayList:arrayList, CC:CC});
+
+        arrayList=[];
+
+        console.log({arrayList:arrayList, CC:CC});
+
+        //console.log('arrayList', arrayList);
+        /*for(var i=0, j=arrayList.length; i<j; i++){
+            arrayList.pop();
+            //console.log('arrayList in loop', arrayList);
+
+        }*/
+        //while(arrayList.length) arrayList.pop();
+        //console.log('arrayList', arrayList);
+        /*var Employee = {
+            company: 'xyz'
+        };*/
+        //var emp1 = Object.create(Employee);
+        //delete emp1.company;
+        //console.log(emp1.company);
+        //foo(); // Here foo is still undefined
+        /*var foo = function foo(){
+            return 12;
+        };*/
+        //console.log('foo', foo());
+    </script>
+</head>
+<body>
+<h3>Hello, Dude!</h3>
+<p>Remember me?</p>
+</body>
+</html>
