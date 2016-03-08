@@ -51,11 +51,11 @@
 
         var CC = arrayList[2];
 
-        console.log({arrayList:arrayList, CC:CC});
+        //console.log({arrayList:arrayList, CC:CC});
 
         arrayList=[];
 
-        console.log({arrayList:arrayList, CC:CC});
+        //console.log({arrayList:arrayList, CC:CC});
 
         //console.log('arrayList', arrayList);
         /*for(var i=0, j=arrayList.length; i<j; i++){
@@ -76,10 +76,22 @@
             return 12;
         };*/
         //console.log('foo', foo());
+        window.onload=function(){
+            document.getElementById('header').onclick=function(){
+                console.log('hello');
+            }
+        };
     </script>
+    <!--<script src="scripts/proto1.js"></script>-->
 </head>
 <body>
-<h3>Hello, Dude!</h3>
-<p>Remember me?</p>
+<h3 id="header">JS and some others</h3>
+<p><a href="https://rapd.wordpress.com/2007/07/12/javascript-substr-vs-substring/">substring() and slice() difference</a></p>
+<div id="output"></div>
+<script>
+    /*document.getElementById('header').onclick=function(){
+        console.log('hello');
+    }*/
+</script>
 </body>
 </html>
