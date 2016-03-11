@@ -2,6 +2,10 @@
     box-sizing: border-box;
     font-family: Tahoma, serif;
 }
+body{
+    display: flex;
+    flex-direction: row;
+}
 h1, h2, h3, h4, h5, header{
     font-family: Verdana, serif;
 }
@@ -13,7 +17,14 @@ header{
 }
 main{
     margin: auto;
-    max-width: 960px;
+    max-width: 1160px;
+}
+main > h1,
+main > h2,
+main > h3,
+main > h4,
+main > h5{
+    padding: 0 5px;
 }
 [draggable] {
     cursor:move;
@@ -39,19 +50,23 @@ main{
     background-color:#514378;
 } 
 .box-panel{
-    margin-top:20px;
-}   
+    margin:20px 5px;
+    padding: 10px 5px;
+}
+.box-panel .task{
+    width: 273px;
+}
 .card{
     color:white;
     padding:10px;
 }
-.column{
-    flex-grow:1;
-    /*background-color: #eee;
-    padding: 20px 0;*/
+.column, 
+.box-panel .task{
+    float: left;
+    margin: auto 5px 10px;
 }
-.box-panel .column{
-    flex-grow: 0.33;
+.column{
+    width: 280px;
 }
 .column.over {
     border: 2px dashed #514378;
@@ -59,20 +74,8 @@ main{
 .moving{
     border:solid 2px #adadad
 }
-.box-flex .column:first-child{
-    margin-left: 0;
-    margin-right: 7.5px;
-}
-.box-flex .column:last-child{
-   margin-right: 0;
-   margin-left: 7.5px;
-}
-/* id id */
-.box-flex{
-    display: flex;
-    flex: 1;
-    /* by default:
-    flex-direction: row;*/
+.cards-container{
+    overflow:auto;
 }
 .row{
     padding:10px 0;
@@ -81,17 +84,17 @@ main{
     margin-bottom: 10px;
     padding: 10px;
 }
-.new .task{
+.task.new{
     background-color: #B0FF00;
     color: black;
 }
-.processed .task{
+.task.processed{
     background-color: #38B2AE;
 }
-.done .task{
+.task.done{
     background-color: #F3FF00;
     color: black;
 }
-.box-flex, .row, .column, .card{
+.cards-container, .row, .column, .card{
     min-height:60px;    
 }

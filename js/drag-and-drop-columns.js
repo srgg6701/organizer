@@ -1,19 +1,25 @@
 window.onload = function () {
-    // солнце взошло, растоманы! Пора продавать урожай ☺
+    // солнце взошло, растоманы! Пора распространять урожай ☺
     window.dragStore = setupDragStore(); //console.log('setupDragStore', window.dragStore);
     // установить наблюдателей для перемещаемых объектов:
     // группы карточек по статусам
-    window.dragStore.setListeners('.column');
+    window.dragStore.setListeners('.column', 'column');
+    window.dragStore.setListeners('.task', 'issue');
 };
 // тут будут закрома
 function setupDragStore() {
     var draggedElement,
-        eventsAll = { // события: глобальные функции, набор по умолчанию (для колонок)
+        eventsMap = { /** [события: глобальные функции], могут
+            различаться для типов элементов т.о., в некоторых
+            случаях значениями являются не имена функций, а объекты,
+            где ключ -- тип набора передаваемых элементов, а значение --
+            имя глобальной функции, присоединяемое к этому элементу с
+            наблюдателем (listener'ом) */
             dragstart:  dragStart,
             dragover:   dragOver,
             dragenter:  dragEnter,
             dragleave:  dragLeave,
-            drop:       dropColumn,
+            drop:       { column: dropColumn, issue: dropIssue },
             dragend:    dragEnd
         }; // приватная переменная
     return {
@@ -24,7 +30,7 @@ function setupDragStore() {
         setDragElement: function (element) {
             draggedElement = element;
         },
-        setListeners: function (selector, events) {
+        setListeners: function (selector, elementsKey, events) {
             var /**
                 контейнер пар [событие: функциия], то, что будет передаваться
                 в качестве параметров при установке наблюдателей */
@@ -34,21 +40,23 @@ function setupDragStore() {
             /**
              * Если набор событий не передан, извлекаем их (и функции) все */
             if (!events) {
-                eventsSet = eventsAll;
+                eventsSet = eventsMap;
             } else { // если передаем, переформируем набор присоединяемых функций
                 eventsSet = {};
-                eventsAll.forEach(function (key) {
-                    eventsSet[key] = eventsAll[key];
+                eventsMap.forEach(function (key) {
+                    eventsSet[key] = eventsMap[key];
                 });
             }
-            console.log('setListeners', {
+            /*console.log('setListeners', {
                 selector:selector,
                 eventsSet:eventsSet, elements:elements
-            });
-            for (var i = 0, j = elements.length; i < j; i++) {
+            });*/
+            for (var i = 0, j = elements.length, method; i < j; i++) {
                 for (var event in eventsSet) {
                     if (eventsSet.hasOwnProperty(event)) {
-                        elements[i].addEventListener(event, eventsSet[event], false);
+                        method = (typeof eventsSet[event] == 'object')?
+                            eventsSet[event][elementsKey] : eventsSet[event];
+                        elements[i].addEventListener(event, method, false);
                     }
                 }
             }
@@ -70,22 +78,44 @@ function handleClassMoving(method) {
 function handleClassOver(method) {
     this.classList[method]('over');
 }
+// универсальная(?)
 function dragStart(e) {
-    console.log('e: ', e);
+    if (e.stopPropagation) { // предотвратить дальнейшее распространение
+        e.stopPropagation();
+    }
+    /*var draggedPrevClass = dragStore.getDragElement();
+    if(draggedPrevClass){
+        if(draggedPrevClass.classList.length && draggedPrevClass.classList.contains('task')){
+            if(this.classList.contains('column')) {
+                console.log('.column after .task, break', {
+                    draggedPrevClass:draggedPrevClass,
+                    this:this.classList
+                });
+                return false;
+            }
+        }
+    }*/
     handleClassMoving.call(this, 'add');
+    // сохранить текущий активный элемент для обработки при следующих событиях
     dragStore.setDragElement(this);
+
+    console.log('this, saved', this, dragStore.getDragElement());
+
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
 }
+// универсальная(?)
 function dragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     return false;
 }
+// универсальная(?)
 function dragEnter(e) {
     // добавить класс к блоку с посадочной площадкой
     handleClassOver.call(this, 'add');
 }
+// универсальная(?)
 function dragLeave(e) { //console.log('dragLeave, this:', this);
     // удалить класс с перемещаемого блока
     handleClassOver.call(this, 'remove');
@@ -133,10 +163,11 @@ function dropColumn(e) {
 }
 function dropIssue(e) {
     var draggedElement = initDropping(e);
+    console.log('dropIssue', {e: e, draggedElement:draggedElement});
 }
-function dropOnRow(event) {
-    var draggedElement = initDropping(event),//dragStore.getDragElement().cloneNode(true),
-        row = event.target;
+function dropOnRow(e) {
+    var draggedElement = initDropping(e),
+        row = e.target;
     console.log('dropRow', {draggedElement: draggedElement, row: row});
     //
     row.appendChild(draggedElement);
