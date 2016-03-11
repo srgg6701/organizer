@@ -13,8 +13,8 @@
             <div class="bg-violet card new">
                 <header>Not started</header>
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssue(this)"></div></div>
-                    <div draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssue(this)"></div></div>
+                    <div id="task0" draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssue(this)"></div></div>
+                    <div id="task1" draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssue(this)"></div></div>
                 </section>
             </div>
         </div>
@@ -22,14 +22,14 @@
             <div class="bg-orange card processed">
                 <header>In progress</header>
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div draggable="true" class="task processed">А это уже задача, находящаяся в работе. Со всякими там
+                    <div id="task2" draggable="true" class="task processed">А это уже задача, находящаяся в работе. Со всякими там
                         описаниями,
                         картинками и т.п.<div class="remove" onclick="removeIssue(this)"></div>
                     </div>
-                    <div draggable="true" class="task processed">Эти задачи можно перемещать туда-сюда между их родительскими
+                    <div id="task3" draggable="true" class="task processed">Эти задачи можно перемещать туда-сюда между их родительскими
                         контейнерами<div class="remove" onclick="removeIssue(this)"></div>
                     </div>
-                    <div draggable="true" class="task processed">Перемещение задачи означает изменение её статуса и это --
+                    <div id="task4" draggable="true" class="task processed">Перемещение задачи означает изменение её статуса и это --
                         стандартная
                         опция её жизненного цикла<div class="remove" onclick="removeIssue(this)"></div>
                     </div>
@@ -40,7 +40,7 @@
             <div class="bg-azure card done">
                 <header>Done</header>
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div draggable="true" class="task done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды
+                    <div id="task5" draggable="true" class="task done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды
                         счастливы<div class="remove" onclick="removeIssue(this)"></div>
                     </div>
                 </section>

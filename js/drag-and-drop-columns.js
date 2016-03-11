@@ -9,8 +9,9 @@ window.onload = function () {
 // тут будут закрома
 function setupDragStore() {
     var draggedElement,
-        draggedElementPanel,
-        eventsMap = { /** [события: глобальные функции], могут
+        draggedElementsPanel={},
+        eventsMap = { /**
+            [события: глобальные функции], могут
             различаться для типов элементов т.о., в некоторых
             случаях значениями являются не имена функций, а объекты,
             где ключ -- тип набора передаваемых элементов, а значение --
@@ -24,15 +25,24 @@ function setupDragStore() {
             dragend:    dragEnd
         }; // приватная переменная
     return {
-        getDragElement: function (panel) {
-            return panel? draggedElementPanel : draggedElement;
+        getDragElement: function (key) {
+            return key? draggedElementsPanel[key] : draggedElement;
         },
         // вызывается в dragStart
-        setDragElement: function (element, panel) {
-            panel ? draggedElementPanel = element : draggedElement = element;
+        setDragElement: function (element, key) {
+            key ? /** сохранить перетащенный на нижнюю панель элемент
+                    чтобы исключить дублирование (далее будет сверяться)
+                    по id задачи */
+                  draggedElementsPanel[key] = element
+                  /**
+                    сохранить последний перемещённый элемент; также
+                    нужно для проверки -- исключить дублирование элементов
+                    в колонках */
+                : draggedElement = element;
         },
-        removeDraggedElementPanel: function(){
-            draggedElementPanel=null;
+        // удалить из набора перетащенных на нижнюю панель задач текущую
+        removeDraggedElementPanel: function(key){
+            delete draggedElementsPanel[key];
         },
         setListeners: function (selector, elementsKey, events) {
             var /**
@@ -139,6 +149,7 @@ function initDropping(e) {
     if (e.stopPropagation) { // предотвратить дальнейшее распространение
         e.stopPropagation();
     }
+    // получить последний сохранённый элемент
     return dragStore.getDragElement();
 }
 function dropColumn(e) {
@@ -169,32 +180,30 @@ function dropIssue(e) {
     var draggedElement = initDropping(e);
     console.log('dropIssue', {e: e, draggedElement:draggedElement});
 }
-// копировать элемент на нижнюю панель
+function getTaskId(element){
+    return element.id.substr(4);
+}
+// копировать task на нижнюю панель
 function dropOnRow(e) {
     var draggedElement = initDropping(e),
-        draggedElementPanel = dragStore.getDragElement(true),
+        taskId = getTaskId(draggedElement),
+        draggedElementPanel = dragStore.getDragElement(taskId),
         row = e.target, clone;
     if(!draggedElementPanel || draggedElement.innerHTML != draggedElementPanel.innerHTML){
         clone = draggedElement.cloneNode(true);
-        /*if(draggedElementPanel){
-            console.log('dropRow', {
-                draggedElement: draggedElement, draggedElementPanel:draggedElementPanel,
-                clon: clone, row: row,
-                compareHTML: (draggedElement.innerHTML == draggedElementPanel.innerHTML)
-            });
-        }*/
         //
         row.appendChild(clone);
-        dragStore.setDragElement(clone, true);
+        dragStore.setDragElement(clone, taskId);
     }
 }
 function removeIssue(element){
     var card=element.parentNode,
-        draggedElementPanel = dragStore.getDragElement(true);
+        taskId = getTaskId(card),
+        draggedElementPanel = dragStore.getDragElement(taskId);
     /** удалить ранее сохранённый элемент, чтобы не блокировал
     повторное копирование данных */
     if(draggedElementPanel&&draggedElementPanel.innerHTML==card.innerHTML){
-        dragStore.removeDraggedElementPanel();
+        dragStore.removeDraggedElementPanel(taskId);
     }
     card.parentNode.removeChild(card);
 }
