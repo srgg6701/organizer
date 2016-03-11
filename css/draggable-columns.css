@@ -2,13 +2,27 @@
     box-sizing: border-box;
     font-family: Tahoma, serif;
 }
-h1, h2, h3, h4, h5{
+h1, h2, h3, h4, h5, header{
     font-family: Verdana, serif;
+}
+header{
+    font-weight: bold;
 }
 main{
     margin: auto;
     max-width: 960px;
 }
+[draggable] {
+    cursor:move;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    /* Required to make elements draggable in old WebKit */
+    -khtml-user-drag: element;
+    -webkit-user-drag: element;
+}
+/* classes */
 .bg-brown{
     background-color: brown;
 }
@@ -21,14 +35,23 @@ main{
 .bg-darkazure{
     background-color: rgba(0,175,200,1);
 }
+.bg-darkmarine{
+    background-color:#514378;
+}    
 .card{
     color:white;
     padding:10px;
 }
 .column{
     flex-grow:1;
-    outline: solid 2px #ddd;
+    background-color: #eee;
     padding: 20px 0;
+}
+.column.over {
+    border: 2px dashed #514378;
+}
+.moving{
+    border:solid 2px #adadad
 }
 #columns .column:first-child{
     margin-left: 0;
@@ -44,4 +67,10 @@ main{
     flex: 1;
     /* by default:
     flex-direction: row;*/
+}
+.row{
+    padding:10px 0;
+}
+#rows, .row, .column, .card{
+    min-height:60px;    
 }
