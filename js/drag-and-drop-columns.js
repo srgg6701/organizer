@@ -31,6 +31,9 @@ function setupDragStore() {
         setDragElement: function (element, panel) {
             panel ? draggedElementPanel = element : draggedElement = element;
         },
+        removeDraggedElementPanel: function(){
+            draggedElementPanel=null;
+        },
         setListeners: function (selector, elementsKey, events) {
             var /**
                 контейнер пар [событие: функциия], то, что будет передаваться
@@ -184,4 +187,14 @@ function dropOnRow(e) {
         row.appendChild(clone);
         dragStore.setDragElement(clone, true);
     }
+}
+function removeIssue(element){
+    var card=element.parentNode,
+        draggedElementPanel = dragStore.getDragElement(true);
+    /** удалить ранее сохранённый элемент, чтобы не блокировал
+    повторное копирование данных */
+    if(draggedElementPanel&&draggedElementPanel.innerHTML==card.innerHTML){
+        dragStore.removeDraggedElementPanel();
+    }
+    card.parentNode.removeChild(card);
 }

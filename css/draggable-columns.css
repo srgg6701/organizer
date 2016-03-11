@@ -28,6 +28,7 @@ main > h5{
 }
 [draggable] {
     cursor:move;
+    position: relative;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -54,7 +55,34 @@ main > h5{
     padding: 10px 5px;
 }
 .box-panel .task{
+    padding-right: 28px;
     width: 273px;
+}
+.remove{
+    display: none;
+}
+.box-panel .remove{
+    background-color: black;
+    border-radius: 50%;
+    display: inherit;
+    height: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: rotate(45deg);
+    width: 20px;
+}
+.box-panel .remove::after{
+    content: "+";
+    color: white;
+    cursor: default;
+    display: inline-block;
+    font-weight: bold;
+    height: 20px;
+    line-height: 0;
+    opacity: 0.85;
+    text-align: center;
+    width: 20px;
 }
 .card{
     color:white;
