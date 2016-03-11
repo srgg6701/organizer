@@ -1,8 +1,12 @@
 var classNameMoving='moving',
-    classNameOver='over';
+    classNameOver='over',
+    dragSrcEl = null;
 
 function handleDragStart(e) {
     this.classList.add(classNameMoving);
+    dragSrcEl = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
 }
 function handleDragOver(e) {
     e.preventDefault();
@@ -20,9 +24,22 @@ function handleDragLeave(e) { console.log('handleDragLeave, this:', this);
 function handleDragEnd(e) { console.log('handleDragEnd, this:', this);
     this.classList.remove(classNameMoving);
     var targetArea=document.querySelector('.over');
+    // задержка для красоты ☻
     setTimeout(function(){
         if(targetArea) targetArea.classList.remove(classNameOver);
     },200);
+}
+function handleDrop(e) {
+    if (e.stopPropagation) { // предотвратить дальнейшее распространение
+        e.stopPropagation();
+    }
+    // Don't do anything if dropping the same column we're dragging.
+    if (dragSrcEl != this) {
+        // Set the source column's HTML to the HTML of the columnwe dropped on.
+        dragSrcEl.innerHTML = this.innerHTML;
+        this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+    return false;
 }
 // выбрать все колонки
 var cols = document.querySelectorAll('#columns .column');
@@ -31,6 +48,7 @@ for(var i= 0, j=cols.length; i<j; i++){
     cols[i].addEventListener('dragover', handleDragOver, false);
     cols[i].addEventListener('dragenter', handleDragEnter, false);
     cols[i].addEventListener('dragleave', handleDragLeave, false);
+    cols[i].addEventListener('drop', handleDrop, false);
     cols[i].addEventListener('dragend', handleDragEnd, false);
 }
 /*
