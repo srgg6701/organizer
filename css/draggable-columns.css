@@ -21,9 +21,6 @@ main{
     -khtml-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    /* Required to make elements draggable in old WebKit */
-    -khtml-user-drag: element;
-    -webkit-user-drag: element;
 }
 /* classes */
 .bg-brown{
@@ -56,16 +53,16 @@ main{
 .moving{
     border:solid 2px #adadad
 }
-#columns .column:first-child{
+#box-columns .column:first-child{
     margin-left: 0;
     margin-right: 7.5px;
 }
-#columns .column:last-child{
+#box-columns .column:last-child{
    margin-right: 0;
    margin-left: 7.5px;
 }
 /* id id */
-#columns{
+#box-columns{
     display: flex;
     flex: 1;
     /* by default:
@@ -74,6 +71,6 @@ main{
 .row{
     padding:10px 0;
 }
-#rows, .row, .column, .card{
+#box-rows, .row, .column, .card{
     min-height:60px;    
 }

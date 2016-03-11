@@ -1,61 +1,101 @@
-var classNameMoving='moving',
-    classNameOver='over',
-    dragSrcEl = null;
+window.onload = function () {
 
-function handleDragStart(e) {
-    this.classList.add(classNameMoving);
-    dragSrcEl = this;
+    (window.setDragHandler = function () {
+        // выбрать все колонки
+        var cols = document.querySelectorAll('#box-columns .column'),
+            events = {
+                dragstart: dragStart,
+                dragover: dragOver,
+                dragenter: dragEnter,
+                dragleave: dragLeave,
+                drop: drop,
+                dragend: dragEnd
+            };
+        for (var i = 0, j = cols.length; i < j; i++) {
+            for (var event in events) {
+                if (events.hasOwnProperty(event)) {
+                    cols[i].addEventListener(event, events[event], false);
+                }
+            }
+        }
+    })();
+    window.dragStore = setDragStore();
+    console.log('setDragStore', setDragStore);
+};
+function setDragStore() {
+    var draggedElement; // приватная переменная
+    return {
+        getDragElement: function () {
+            return draggedElement;
+        },
+        setDragElement: function (element) {
+            draggedElement = element;
+        }
+    }
+}
+
+/**
+ * Добавить/удалить класс перемещаемого объекта
+ * @param method
+ */
+function handleClassMoving(method) {
+    this.classList[method]('moving');
+}
+/**
+ * Добавить/удалить класс для объекта, НАД которым перемещаем
+ * @param method
+ */
+function handleClassOver(method) {
+    this.classList[method]('over');
+}
+function dragStart(e) {
+    handleClassMoving.call(this, 'add');
+    dragStore.setDragElement(this);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
 }
-function handleDragOver(e) {
+function dragOver(e) {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+    e.dataTransfer.dropEffect = 'move';
     return false;
 }
-function handleDragEnter(e) {
+function dragEnter(e) {
     // добавить класс к блоку с посадочной площадкой
-    this.classList.add(classNameOver);
+    handleClassOver.call(this, 'add');
 }
-function handleDragLeave(e) { console.log('handleDragLeave, this:', this);
+function dragLeave(e) { //console.log('dragLeave, this:', this);
     // удалить класс с перемещаемого блока
-    this.classList.remove(classNameOver);
+    handleClassOver.call(this, 'remove');
 }
-function handleDragEnd(e) { console.log('handleDragEnd, this:', this);
-    this.classList.remove(classNameMoving);
-    var targetArea=document.querySelector('.over');
+function dragEnd(e) { //console.log('dragEnd, this:', this);
+    handleClassMoving.call(this, 'remove');
+    var targetArea;
     // задержка для красоты ☻
-    setTimeout(function(){
-        if(targetArea) targetArea.classList.remove(classNameOver);
-    },200);
+    setTimeout(function () {
+        if (targetArea = document.querySelector('.over'))
+            handleClassOver.call(targetArea, 'remove');
+    }, 200);
 }
-function handleDrop(e) {
+function drop(e) {
     if (e.stopPropagation) { // предотвратить дальнейшее распространение
         e.stopPropagation();
     }
-    // Don't do anything if dropping the same column we're dragging.
-    if (dragSrcEl != this) {
+    var draggedElement = dragStore.getDragElement();
+    console.log('drop', {
+        draggedElement: draggedElement, this: this,
+        draggedElementParentId: draggedElement.parentNode.id,
+        thisParentId: this.parentNode.id
+    });
+    // Если собираемся сбрасывать не туда же, откуда пришли
+    if (draggedElement != this) {
+        // если перетаскиваем вертикальные блоки (задачи по статусам)
+        /*if(draggedElement.classList.contains('column')){
+         if(draggedElement.parentNode.id!=this.parentNode.id)
+         return false;
+         }*/
         // Set the source column's HTML to the HTML of the columnwe dropped on.
-        dragSrcEl.innerHTML = this.innerHTML;
+        draggedElement.innerHTML = this.innerHTML;
         this.innerHTML = e.dataTransfer.getData('text/html');
     }
     return false;
 }
-// выбрать все колонки
-var cols = document.querySelectorAll('#columns .column');
-for(var i= 0, j=cols.length; i<j; i++){
-    cols[i].addEventListener('dragstart', handleDragStart, false);
-    cols[i].addEventListener('dragover', handleDragOver, false);
-    cols[i].addEventListener('dragenter', handleDragEnter, false);
-    cols[i].addEventListener('dragleave', handleDragLeave, false);
-    cols[i].addEventListener('drop', handleDrop, false);
-    cols[i].addEventListener('dragend', handleDragEnd, false);
-}
-/*
-[].forEach.call(cols, function(col) {
-    col.addEventListener('dragstart', handleDragStart, false);
-    col.addEventListener('dragover', handleDragOver, false);
-    col.addEventListener('dragenter', handleDragEnter, false);
-    col.addEventListener('dragleave', handleDragLeave, false);
-    col.addEventListener('dragend', handleDragEnd, false);
-});*/
