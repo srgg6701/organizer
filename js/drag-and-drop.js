@@ -37,14 +37,32 @@ function drop(ev) {
                 home.appendChild(card); // old place
             }
         }else{
-            if(receiver.id=='tasks-container'){
+            if(receiver.classList.contains("cards-container")){ //receiver.id=='tasks-container'
                 console.log('%couter-container', 'color:orange',{card:card, receiver:receiver});
                 receiver.appendChild(card);
             }else{
                 console.log('%ctop bar', 'color:violet',{card:card, receiver:receiver, home:home});
-                if(!receiver.classList.contains("card-status")
-                    || card.classList.contains("card")){
-                    receiver.appendChild(card);
+                if(receiver.classList.contains("cards-container-panel")){
+                    var parentContainer=card.parentNode,
+                        containers=parentContainer.getElementsByClassName('cards-container-panel');
+
+                    for(var i= 0, j=containers.length, cardIndex, receiverIndex; i<j; i++){
+                        console.log('container: ', containers[i]);
+                        if(containers[i]==card){
+                            cardIndex=i;
+                            console.log('card!', {card:card, container:containers[i]});
+                        }
+                        if(containers[i]==receiver){
+                            receiverIndex=i;
+                            console.log('receiver!', {receiver:receiver, container:containers[i]});
+                        }
+                        if(cardIndex&&receiverIndex) break;
+                    }
+                    if(cardIndex>receiverIndex)
+                        parentContainer.insertBefore(card, receiver);
+                    else
+                        parentContainer.appendChild(card);
+
                     home=null;
                 }
             }
