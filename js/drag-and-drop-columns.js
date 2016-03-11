@@ -9,6 +9,7 @@ window.onload = function () {
 // тут будут закрома
 function setupDragStore() {
     var draggedElement,
+        draggedElementPanel,
         eventsMap = { /** [события: глобальные функции], могут
             различаться для типов элементов т.о., в некоторых
             случаях значениями являются не имена функций, а объекты,
@@ -23,12 +24,12 @@ function setupDragStore() {
             dragend:    dragEnd
         }; // приватная переменная
     return {
-        getDragElement: function () {
-            return draggedElement;
+        getDragElement: function (panel) {
+            return panel? draggedElementPanel : draggedElement;
         },
         // вызывается в dragStart
-        setDragElement: function (element) {
-            draggedElement = element;
+        setDragElement: function (element, panel) {
+            panel ? draggedElementPanel = element : draggedElement = element;
         },
         setListeners: function (selector, elementsKey, events) {
             var /**
@@ -165,10 +166,22 @@ function dropIssue(e) {
     var draggedElement = initDropping(e);
     console.log('dropIssue', {e: e, draggedElement:draggedElement});
 }
+// копировать элемент на нижнюю панель
 function dropOnRow(e) {
     var draggedElement = initDropping(e),
-        row = e.target;
-    console.log('dropRow', {draggedElement: draggedElement, row: row});
-    //
-    row.appendChild(draggedElement);
+        draggedElementPanel = dragStore.getDragElement(true),
+        row = e.target, clone;
+    if(!draggedElementPanel || draggedElement.innerHTML != draggedElementPanel.innerHTML){
+        clone = draggedElement.cloneNode(true);
+        /*if(draggedElementPanel){
+            console.log('dropRow', {
+                draggedElement: draggedElement, draggedElementPanel:draggedElementPanel,
+                clon: clone, row: row,
+                compareHTML: (draggedElement.innerHTML == draggedElementPanel.innerHTML)
+            });
+        }*/
+        //
+        row.appendChild(clone);
+        dragStore.setDragElement(clone, true);
+    }
 }
