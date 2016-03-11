@@ -1,35 +1,41 @@
 window.onload = function () {
+    // солнце взошло, растоманы! ☺
+    window.dragStore = setupDragStore();
+    //console.log('setupDragStore', window.dragStore);
 
-    (window.setDragHandler = function () {
-        // выбрать все колонки
-        var cols = document.querySelectorAll('#box-columns .column'),
-            events = {
-                dragstart: dragStart,
-                dragover: dragOver,
-                dragenter: dragEnter,
-                dragleave: dragLeave,
-                drop: drop,
-                dragend: dragEnd
-            };
-        for (var i = 0, j = cols.length; i < j; i++) {
+    (window.setDragHandler = function (selector) {
+        if (!selector) selector = '.column';
+        // выбрать все блоки с карточками
+        var dragSet = document.querySelectorAll(selector),
+            events = dragStore.events; // извлечь события и имена методов
+        console.log('dragSet', dragSet);
+        // назначить слушателей событий
+        for (var i = 0, j = dragSet.length; i < j; i++) {
             for (var event in events) {
                 if (events.hasOwnProperty(event)) {
-                    cols[i].addEventListener(event, events[event], false);
+                    dragSet[i].addEventListener(event, events[event], false);
                 }
             }
         }
     })();
-    window.dragStore = setDragStore();
-    console.log('setDragStore', setDragStore);
 };
-function setDragStore() {
+function setupDragStore() {
     var draggedElement; // приватная переменная
     return {
         getDragElement: function () {
             return draggedElement;
         },
+        // вызывается в dragStart
         setDragElement: function (element) {
             draggedElement = element;
+        },
+        events: { // события: глобальные функции
+            dragstart: dragStart,
+            dragover: dragOver,
+            dragenter: dragEnter,
+            dragleave: dragLeave,
+            drop: dropColumn,
+            dragend: dragEnd
         }
     }
 }
@@ -48,7 +54,7 @@ function handleClassMoving(method) {
 function handleClassOver(method) {
     this.classList[method]('over');
 }
-function dragStart(e) {
+function dragStart(e) { console.log('e: ', e);
     handleClassMoving.call(this, 'add');
     dragStore.setDragElement(this);
     e.dataTransfer.effectAllowed = 'move';
@@ -69,19 +75,28 @@ function dragLeave(e) { //console.log('dragLeave, this:', this);
 }
 function dragEnd(e) { //console.log('dragEnd, this:', this);
     handleClassMoving.call(this, 'remove');
-    var targetArea;
+    var targetAreaOver, targetAreaMoving;
+    if (targetAreaMoving = document.querySelector('.moving'))
+        handleClassMoving.call(targetAreaMoving, 'remove');
     // задержка для красоты ☻
     setTimeout(function () {
-        if (targetArea = document.querySelector('.over'))
-            handleClassOver.call(targetArea, 'remove');
+        if (targetAreaOver = document.querySelector('.over'))
+            handleClassOver.call(targetAreaOver, 'remove');
     }, 200);
 }
-function drop(e) {
+function initDropping(e){
     if (e.stopPropagation) { // предотвратить дальнейшее распространение
         e.stopPropagation();
     }
-    var draggedElement = dragStore.getDragElement();
-    console.log('drop', {
+    return dragStore.getDragElement();
+}
+function dropColumn(e) {
+    /*if (e.stopPropagation) { // предотвратить дальнейшее распространение
+        e.stopPropagation();
+    }*/
+    var draggedElement = initDropping(e);//dragStore.getDragElement();
+
+    console.log('dropColumn', {
         draggedElement: draggedElement, this: this,
         draggedElementParentId: draggedElement.parentNode.id,
         thisParentId: this.parentNode.id
@@ -98,4 +113,14 @@ function drop(e) {
         this.innerHTML = e.dataTransfer.getData('text/html');
     }
     return false;
+}
+function dropIssue(e){
+    var draggedElement = initDropping(e);
+}
+function dropOnRow(event){
+    var draggedElement = initDropping(event),//dragStore.getDragElement().cloneNode(true),
+        row = event.target;
+    console.log('dropRow', {draggedElement: draggedElement, row: row});
+    //
+    row.appendChild(draggedElement);
 }

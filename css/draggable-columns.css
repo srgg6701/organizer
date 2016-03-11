@@ -8,7 +8,7 @@ h1, h2, h3, h4, h5, header{
 header{
     font-weight: bold;
     background-color: #444;
-    margin: -10px;
+    margin: -10px -10px 10px;
     padding: 10px;
 }
 main{
@@ -23,29 +23,35 @@ main{
     user-select: none;
 }
 /* classes */
-.bg-brown{
-    background-color: brown;
+.bg-violet {
+    background-color: #D063CA;
 }
-.bg-darkgoldenrod{
-    background-color: darkgoldenrod;
+.bg-orange {
+    background-color: #FFB500;
 }
-.bg-darkorange{
-    background-color: darkorange;
+.bg-azure {
+    background-color: #00FAFF;
 }
 .bg-darkazure{
     background-color: rgba(0,175,200,1);
 }
 .bg-darkmarine{
     background-color:#514378;
-}    
+} 
+.box-panel{
+    margin-top:20px;
+}   
 .card{
     color:white;
     padding:10px;
 }
 .column{
     flex-grow:1;
-    background-color: #eee;
-    padding: 20px 0;
+    /*background-color: #eee;
+    padding: 20px 0;*/
+}
+.box-panel .column{
+    flex-grow: 0.33;
 }
 .column.over {
     border: 2px dashed #514378;
@@ -53,16 +59,16 @@ main{
 .moving{
     border:solid 2px #adadad
 }
-#box-columns .column:first-child{
+.box-flex .column:first-child{
     margin-left: 0;
     margin-right: 7.5px;
 }
-#box-columns .column:last-child{
+.box-flex .column:last-child{
    margin-right: 0;
    margin-left: 7.5px;
 }
 /* id id */
-#box-columns{
+.box-flex{
     display: flex;
     flex: 1;
     /* by default:
@@ -71,6 +77,21 @@ main{
 .row{
     padding:10px 0;
 }
-#box-rows, .row, .column, .card{
+.task{
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.new .task{
+    background-color: #B0FF00;
+    color: black;
+}
+.processed .task{
+    background-color: #38B2AE;
+}
+.done .task{
+    background-color: #F3FF00;
+    color: black;
+}
+.box-flex, .row, .column, .card{
     min-height:60px;    
 }

@@ -4,13 +4,13 @@
     margin-top: 10px;
     padding: 20px;
 }
-body .card.bg-brown{
+body .card.bg-violet {
     background-color: brown;
 }
-body .card.bg-darkgoldenrod{
+body .card.bg-orange {
     background-color: darkgoldenrod;
 }
-body .card.bg-darkorange{
+body .card.bg-azure {
     background-color: darkorange;
 }
 body .card.bg-darkazure{
