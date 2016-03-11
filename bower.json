@@ -7,5 +7,8 @@
   "main": "",
   "moduleType": [],
   "license": "MIT",
-  "homepage": ""
+  "homepage": "",
+  "dependencies": {
+    "modernizr": "^3.3.1"
+  }
 }

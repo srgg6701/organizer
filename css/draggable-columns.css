@@ -1,0 +1,47 @@
+*{
+    box-sizing: border-box;
+    font-family: Tahoma, serif;
+}
+h1, h2, h3, h4, h5{
+    font-family: Verdana, serif;
+}
+main{
+    margin: auto;
+    max-width: 960px;
+}
+.bg-brown{
+    background-color: brown;
+}
+.bg-darkgoldenrod{
+    background-color: darkgoldenrod;
+}
+.bg-darkorange{
+    background-color: darkorange;
+}
+.bg-darkazure{
+    background-color: rgba(0,175,200,1);
+}
+.card{
+    color:white;
+    padding:10px;
+}
+.column{
+    flex-grow:1;
+    outline: solid 2px #ddd;
+    padding: 20px 0;
+}
+#columns .column:first-child{
+    margin-left: 0;
+    margin-right: 7.5px;
+}
+#columns .column:last-child{
+   margin-right: 0;
+   margin-left: 7.5px;
+}
+/* id id */
+#columns{
+    display: flex;
+    flex: 1;
+    /* by default:
+    flex-direction: row;*/
+}
