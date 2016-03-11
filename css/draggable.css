@@ -1,0 +1,88 @@
+.card{
+    color:white;
+    cursor: move;
+    margin-top: 10px;
+    padding: 20px;
+}
+body .card.bg-brown{
+    background-color: brown;
+}
+body .card.bg-darkgoldenrod{
+    background-color: darkgoldenrod;
+}
+body .card.bg-darkorange{
+    background-color: darkorange;
+}
+body .card.bg-darkazure{
+    background-color: rgba(0,175,200,1);
+}
+.container-horizontal .card{
+    cursor:text;
+    float: left;
+    width: calc(33% - 3px);
+}
+.container-horizontal .card:not(:last-child){
+    margin-right: 10px;
+}
+.cards-container{
+    background-color: rgba(50,150,80,1);
+    border-radius:4px;
+    float:left;
+    margin-right:10px;
+    min-height: 80px;
+    padding:10px;
+    width: 100%;
+}
+.cards-container h4{
+    background-color: #999;
+    color:yellow;
+    margin: 0;
+    padding: 6px 10px;
+}
+.cards-container-panel{
+    float: left;
+    overflow: hidden;
+}
+.row > .cards-container-panel{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+}
+.row > .cards-container-panel:first-child{
+    padding-left: 0;
+}
+.row > .cards-container-panel:last-child{
+    padding-right: 0;
+}
+
+.cards-container-panel:not(.col-lg-12){
+    /*width:calc(33.33% - 10px);*/
+    /*margin: -10px;*/
+    width: 33.33%;
+}
+.clearfix{
+    clear: both;
+}
+hr.clearfix{
+    visibility: hidden;
+}
+#dataTransfer{
+    background-color: #d9edf7;
+    padding: 20px;
+}
+
+#not-started{
+    background-color: burlywood;
+}
+#in-progress{
+    background-color: cornflowerblue;
+}
+#all-tasks{
+    background-color: currentColor;
+}
+#tasks-container{
+    background-color: #ddd;
+    /*margin: -30px;*/
+    overflow: hidden;
+    padding: 30px;
+}

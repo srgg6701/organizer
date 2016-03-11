@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag-n-Roll</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css.map">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css.map">
+    <link rel="stylesheet" href="css/draggable.css">
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <!--<script src="bower_components/jquery/dist/jquery.min.map"></script>-->
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row"><h3>Drag it, Baby!</h3></div>
+    <div class="row">
+        <div id="cards-container-panel-1" class="cards-container-panel" ondragover="dragOver(event)"
+             ondrop="drop(event)">
+            <div id="not-started" class="cards-container card-status" draggable="true"
+                 ondragstart="dragStart(event)"
+                 ondragover="dragOver(event)" ondrop="drop(event)">
+                <h4>Not started</h4>
+                <div class="card bg-brown" id="drag1" draggable="true" ondragstart="dragStart(event)">Draggable 1
+                    coming
+                    here
+                </div>
+
+            </div>
+        </div>
+        <div id="cards-container-panel-2" class="cards-container-panel" ondragover="dragOver(event)"
+             ondrop="drop(event)">
+            <div id="in-progress" class="cards-container card-status" draggable="true"
+                 ondragstart="dragStart(event)"
+                 ondragover="dragOver(event)" ondrop="drop(event)">
+                <h4>In progress</h4>
+                <div class="card bg-darkorange" id="drag2" draggable="true" ondragstart="dragStart(event)">Draggable
+                    2
+                    coming here
+                </div>
+
+            </div>
+        </div>
+        <div id="cards-container-panel-3" class="cards-container-panel" ondragover="dragOver(event)"
+             ondrop="drop(event)">
+            <div id="done" class="cards-container card-status" draggable="true" ondragstart="dragStart(event)"
+                 ondragover="dragOver(event)" ondrop="drop(event)">
+                <h4>Done</h4>
+                <div class="card bg-darkgoldenrod" id="drag3" draggable="true" ondragstart="dragStart(event)">
+                    Draggable
+                    3 coming here
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <hr class="clearfix">
+        <div id="all-tasks" class="cards-container clearfix col-lg-12 container-horizontal" ondragover="dragOver(event)"
+             ondrop="drop(event)">
+            <h4>All tasks</h4>
+        </div>
+        <hr class="clearfix">
+        <div id="dataTransfer"></div>
+    </div>
+</div>
+<script src="js/drag-and-drop.js"></script>
+</body>
+</html>
