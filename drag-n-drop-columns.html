@@ -12,26 +12,43 @@
         <div draggable="true" class="column">
             <div class="bg-violet card new">
                 <header>Not started</header>
-                <div draggable="true" class="task">Тут некая задача из тех, что назначены, но ещё не начаты</div>
-                <div draggable="true" class="task">И тут тоже задача из того же разряда</div>
+                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
+                    <div draggable="true" class="task">Тут некая задача из тех, что назначены, но ещё не начаты</div>
+                    <div draggable="true" class="task">И тут тоже задача из того же разряда</div>
+                </section>
             </div>
         </div>
         <div draggable="true" class="column">
             <div class="bg-orange card processed">
                 <header>In progress</header>
-                <div draggable="true" class="task">А это уже задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.</div>
-                <div draggable="true" class="task">Эти задачи можно перемещать туда-сюда между их родительскими контейнерами</div>
-                <div draggable="true" class="task">Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла</div>
+                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
+                    <div draggable="true" class="task">А это уже задача, находящаяся в работе. Со всякими там
+                        описаниями,
+                        картинками и т.п.
+                    </div>
+                    <div draggable="true" class="task">Эти задачи можно перемещать туда-сюда между их родительскими
+                        контейнерами
+                    </div>
+                    <div draggable="true" class="task">Перемещение задачи означает изменение её статуса и это --
+                        стандартная
+                        опция её жизненного цикла
+                    </div>
+                </section>
             </div>
         </div>
         <div draggable="true" class="column">
             <div class="bg-azure card done">
                 <header>Done</header>
-                <div draggable="true" class="task">Сделано то-то и то-то. Заказчик в предвкушении, члены команды счастливы</div>
+                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
+                    <div draggable="true" class="task">Сделано то-то и то-то. Заказчик в предвкушении, члены команды
+                        счастливы
+                    </div>
+                </section>
             </div>
         </div>
     </div>
-    <div id="box-rows-1" class="box-flex bg-darkmarine box-panel" ondragover="dragOver(event)" ondrop="dropOnRow(event)"></div>
+    <div id="box-rows-1" class="box-flex bg-darkmarine box-panel" ondragover="dragOver(event)"
+         ondrop="dropOnRow(event)"></div>
 </main>
 <script src="js/drag-and-drop-columns.js"></script>
 </body>
