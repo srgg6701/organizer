@@ -11,44 +11,37 @@
     <div id="box-columns" class="cards-container">
         <div draggable="true" class="column">
             <div class="bg-violet card new">
-                <header>Not started</header>
-                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div id="task0" draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
-                    <div id="task1" draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
+                <header data-drop-target="column">Not started</header>
+                <section class="cards-box">
+                    <div id="task0" data-drop-target="card" draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
+                    <div id="task1" data-drop-target="card" draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
                 </section>
             </div>
         </div>
         <div draggable="true" class="column">
             <div class="bg-orange card processed">
-                <header>In progress</header>
-                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div id="task2" draggable="true" class="task processed">А это уже задача, находящаяся в работе. Со всякими там
-                        описаниями,
-                        картинками и т.п.<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                <header data-drop-target="column">In progress</header>
+                <section class="cards-box">
+                    <div id="task2" data-drop-target="card" draggable="true" class="task processed">А это уже задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
-                    <div id="task3" draggable="true" class="task processed">Эти задачи можно перемещать туда-сюда между их родительскими
-                        контейнерами<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div id="task3" data-drop-target="card" draggable="true" class="task processed">Эти задачи можно перемещать туда-сюда между их родительскими контейнерами<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
-                    <div id="task4" draggable="true" class="task processed">Перемещение задачи означает изменение её статуса и это --
-                        стандартная
-                        опция её жизненного цикла<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div id="task4" data-drop-target="card" draggable="true" class="task processed">Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                 </section>
             </div>
         </div>
         <div draggable="true" class="column">
             <div class="bg-azure card done">
-                <header>Done</header>
-                <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div id="task5" draggable="true" class="task done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды
-                        счастливы<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                <header data-drop-target="column">Done</header>
+                <section class="cards-box">
+                    <div id="task5" data-drop-target="card" draggable="true" class="task done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды счастливы<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                 </section>
             </div>
         </div>
     </div>
-    <div id="box-rows-1" class="cards-container bg-darkmarine box-panel" ondragover="dragOver(event)"
-         ondrop="dropOnRow(event)"></div>
+    <div id="box-rows-1" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></div>
 </main>
 <script src="js/drag-and-drop-columns.js"></script>
 </body>

@@ -100,7 +100,8 @@ main > h5{
     border: 2px dashed #514378;
 }
 .moving{
-    border:solid 2px #adadad
+    /*border:solid 2px #adadad*/
+    opacity: 0.75;
 }
 .cards-container{
     overflow:auto;
