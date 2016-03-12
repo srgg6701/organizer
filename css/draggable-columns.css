@@ -54,7 +54,7 @@ main > h5{
     margin:20px 5px;
     padding: 10px 5px;
 }
-.box-panel .task{
+.box-panel .card{
     padding-right: 28px;
     width: 273px;
 }
@@ -84,12 +84,12 @@ main > h5{
     text-align: center;
     width: 20px;
 }
-.card{
+.cards{
     color:white;
     padding:10px;
 }
 .column, 
-.box-panel .task{
+.box-panel .card{
     float: left;
     margin: auto 5px 10px;
 }
@@ -109,21 +109,21 @@ main > h5{
 .row{
     padding:10px 0;
 }
-.task{
+.card{
     margin-bottom: 10px;
     padding: 10px;
 }
-.task.new{
+.card.new{
     background-color: #B0FF00;
     color: black;
 }
-.task.processed{
+.card.processed{
     background-color: #38B2AE;
 }
-.task.done{
+.card.done{
     background-color: #F3FF00;
     color: black;
 }
-.cards-container, .row, .column, .card{
+.cards-container, .row, .column, .cards{
     min-height:60px;    
 }

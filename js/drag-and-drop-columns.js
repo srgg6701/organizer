@@ -13,7 +13,7 @@ window.onload = function () {
     // установить наблюдателей для перемещаемых объектов:
     // группы карточек по статусам, карточки между группами и панелями
     window.dragStore.setListeners('.column');
-    window.dragStore.setListeners('.task');
+    window.dragStore.setListeners('.card');
     window.dragStore.setListeners('.cards-box', ['dragover', 'drop']);
     window.dragStore.setListeners('.box-panel', ['dragover', 'drop']);
     console.log('%c======================================', 'color: rebeccapurple');
