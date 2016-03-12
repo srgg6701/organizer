@@ -4,45 +4,172 @@
     <meta charset="UTF-8">
     <title>Drag-n-Drop</title>
     <link rel="stylesheet" href="css/draggable-columns.css">
+    <style>
+        .container {
+            margin: 10px 10px 10px 0;
+            min-height: 80px;
+            min-width: 320px;
+            padding: 10px;
+        }
+
+        .float-left {
+            float: left;
+        }
+
+        [class*="bg"] {
+            margin-bottom: 10px;
+            margin-right: 10px;
+            padding: 10px;
+        }
+
+        .bg-pink {
+            background-color: pink;
+        }
+
+        .bg-lightskyblue {
+            background-color: lightskyblue;
+        }
+
+        .bg-linen {
+            background-color: linen;
+        }
+
+        .command {
+            color: blue;
+            cursor: pointer;
+            display: table;
+            margin: 10px 0 20px;
+        }
+
+        .section-box {
+            margin: 10px 10px auto;
+            padding: 20px;
+            background-color: orange;
+        }
+
+        .section-box h4 {
+            background-color: #fff;
+            display: table;
+            margin: 0;
+        }
+
+        .test {
+            background-color: yellow;
+            cursor: move;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        #test-area {
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #test-area.collapsed {
+            display: none;
+        }
+
+        hr {
+            clear: both;
+        }
+    </style>
+    <script>
+        function switchSize() {
+            console.log('switchSize');
+            document.getElementById('test-area').classList.toggle('collapsed');
+        }
+        window.onload = function () {
+            var eventsMap = {
+                dragstart: Dragstart,
+                dragover: Dragover,
+                dragenter: Dragenter,
+                dragleave: Dragleave,
+                drop: Drop,
+                dragend: Dragend
+            };
+            [].forEach.call(document.querySelectorAll('.test-move, .test-dropzone, .section-box'),
+                    function (element) {
+                        for (var event in eventsMap) {
+                            element.addEventListener(event, eventsMap[event], false);
+                        }
+                    });
+        };
+    </script>
 </head>
 <body>
+<div class="issues" ondblclick="this.innerHTML=''"></div>
 <main>
     <h3>Drag me up, baby. And lo♥e me there ☺</h3>
+    <h4 class="command" id="switcher" onclick="switchSize()">Switch test area</h4>
+    <div id="test-area" class="collapsed">
+        <section class="test section-box">
+            <div class="float-left bg-pink test-move" id="some-id-1" draggable="true">Drag me pink!</div>
+            <div class="float-left bg-lightskyblue test-move" id="some-id-2" draggable="true">Drag me lightskyblue!
+            </div>
+            <div class="float-left bg-linen test-move" id="some-id-3" draggable="true">Drag me linen!</div>
+            <hr>
+            <section class="float-left section-box">
+                <h4>Drop Zone 1</h4>
+                <div class="float-left container bg-violet test-dropzone" id="drag-test-1"></div>
+            </section>
+            <section class="float-left section-box">
+                <h4>Drop Zone 2</h4>
+                <div class="float-left container bg-azure test-dropzone" id="drag-test-2"></div>
+            </section>
+        </section>
+    </div>
+
     <div id="box-columns" class="cards-container">
-        <div draggable="true" class="column">
+        <div draggable="true" data-drop-target="card" class="column">
             <div class="bg-violet cards new">
                 <header data-drop-target="column">Not started</header>
-                <section class="cards-box">
-                    <div id="task0" data-drop-target="card" draggable="true" class="card new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
-                    <div id="task1" data-drop-target="card" draggable="true" class="card new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
-                </section>
+                <!--<section class="cards-box" data-drop-target="cards-box"></section>-->
+                <div id="task0" data-drop-target="card" draggable="true" class="card new">Тут некая задача из тех,
+                    что назначены, но ещё не начаты
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task1" data-drop-target="card" draggable="true" class="card new">И тут тоже задача из того же разряда
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+
             </div>
         </div>
-        <div draggable="true" class="column">
+        <div draggable="true" data-drop-target="card" class="column">
             <div class="bg-orange cards processed">
                 <header data-drop-target="column">In progress</header>
-                <section class="cards-box">
-                    <div id="task2" data-drop-target="card" draggable="true" class="card processed">А это уже задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
-                    </div>
-                    <div id="task3" data-drop-target="card" draggable="true" class="card processed">Эти задачи можно перемещать туда-сюда между их родительскими контейнерами<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
-                    </div>
-                    <div id="task4" data-drop-target="card" draggable="true" class="card processed">Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
-                    </div>
-                </section>
+                <!--<section class="cards-box" data-drop-target="cards-box"></section>-->
+                <div id="task2" data-drop-target="card" draggable="true" class="card processed">А это уже задача,
+                    находящаяся в работе. Со всякими там описаниями, картинками и т.п.
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task3" data-drop-target="card" draggable="true" class="card processed">Эти задачи можно
+                    перемещать туда-сюда между их родительскими контейнерами
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task4" data-drop-target="card" draggable="true" class="card processed">Перемещение задачи
+                    означает изменение её статуса и это -- стандартная опция её жизненного цикла
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+
             </div>
         </div>
-        <div draggable="true" class="column">
+        <div draggable="true" data-drop-target="card" class="column">
             <div class="bg-azure cards done">
                 <header data-drop-target="column">Done</header>
-                <section class="cards-box">
-                    <div id="task5" data-drop-target="card" draggable="true" class="card done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды счастливы<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
-                    </div>
-                </section>
+                <!--<section class="cards-box" data-drop-target="cards-box"></section>-->
+                <div id="task5" data-drop-target="card" draggable="true" class="card done">Сделано то-то и то-то.
+                    Заказчик в предвкушении, члены команды счастливы
+                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+
             </div>
         </div>
     </div>
-    <div id="box-rows-1" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></div>
+    <!--id="box-rows-1"-->
+    <section data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></section>
 </main>
 <script src="js/drag-and-drop-columns.js"></script>
+<!--<script src="js/drag-and-drop-mdn.js"></script>-->
+<!--<script src="js/drag-and-drop-test.js"></script>-->
 </body>
 </html>

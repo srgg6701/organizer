@@ -15,6 +15,9 @@ header{
     margin: -10px -10px 10px;
     padding: 10px;
 }
+header, .card{
+    cursor:move;
+}
 main{
     margin: auto;
     max-width: 1160px;
@@ -27,7 +30,6 @@ main > h5{
     padding: 0 5px;
 }
 [draggable] {
-    cursor:move;
     position: relative;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -84,34 +86,12 @@ main > h5{
     text-align: center;
     width: 20px;
 }
-.cards{
-    color:white;
-    padding:10px;
-}
-.column, 
-.box-panel .card{
-    float: left;
-    margin: auto 5px 10px;
-}
-.column{
-    width: 280px;
-}
-.column.over {
-    border: 2px dashed #514378;
-}
-.moving{
-    /*border:solid 2px #adadad*/
-    opacity: 0.75;
-}
-.cards-container{
-    overflow:auto;
-}
-.row{
-    padding:10px 0;
-}
 .card{
     margin-bottom: 10px;
     padding: 10px;
+}
+.cards-box{
+    min-height: 68px;
 }
 .card.new{
     background-color: #B0FF00;
@@ -124,6 +104,41 @@ main > h5{
     background-color: #F3FF00;
     color: black;
 }
-.cards-container, .row, .column, .cards{
-    min-height:60px;    
+.cards-container, .row, .cards{
+    min-height: 127px;
+}
+.cards{
+    color:white;
+    padding:10px;
+}
+.cards-container{
+    overflow:auto;
+}
+.column,
+.box-panel .card{
+    float: left;
+    margin: auto 5px 10px;
+}
+.column{
+    width: 280px;
+}
+.column.over {
+    border: 2px dashed #514378;
+}
+.issues{
+    background-color: lightyellow;
+    border: solid 6px rgba(0,0,0,0.5);
+    max-width: 240px;
+    padding: 10px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+.moving{
+    /*border:solid 2px #adadad*/
+    opacity: 0.75;
+}
+.row{
+    padding:10px 0;
 }
