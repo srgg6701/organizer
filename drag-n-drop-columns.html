@@ -7,14 +7,14 @@
 </head>
 <body>
 <main>
-    <h3>Drag me up, baby. And l♥ve me there ☺</h3>
+    <h3>Drag me up, baby. And lo♥e me there ☺</h3>
     <div id="box-columns" class="cards-container">
         <div draggable="true" class="column">
             <div class="bg-violet card new">
                 <header>Not started</header>
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
-                    <div id="task0" draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssue(this)"></div></div>
-                    <div id="task1" draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssue(this)"></div></div>
+                    <div id="task0" draggable="true" class="task new">Тут некая задача из тех, что назначены, но ещё не начаты <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
+                    <div id="task1" draggable="true" class="task new">И тут тоже задача из того же разряда<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div></div>
                 </section>
             </div>
         </div>
@@ -24,14 +24,14 @@
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
                     <div id="task2" draggable="true" class="task processed">А это уже задача, находящаяся в работе. Со всякими там
                         описаниями,
-                        картинками и т.п.<div class="remove" onclick="removeIssue(this)"></div>
+                        картинками и т.п.<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                     <div id="task3" draggable="true" class="task processed">Эти задачи можно перемещать туда-сюда между их родительскими
-                        контейнерами<div class="remove" onclick="removeIssue(this)"></div>
+                        контейнерами<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                     <div id="task4" draggable="true" class="task processed">Перемещение задачи означает изменение её статуса и это --
                         стандартная
-                        опция её жизненного цикла<div class="remove" onclick="removeIssue(this)"></div>
+                        опция её жизненного цикла<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                 </section>
             </div>
@@ -41,7 +41,7 @@
                 <header>Done</header>
                 <section ondragover="dragOver(event)" ondrop="dropIssue(event)">
                     <div id="task5" draggable="true" class="task done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды
-                        счастливы<div class="remove" onclick="removeIssue(this)"></div>
+                        счастливы<div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
                     </div>
                 </section>
             </div>
