@@ -253,8 +253,7 @@ function drop(e) {
     }, showArgs(arguments));
 
     // Меняем местами колонки
-    if( dropTargetStart=='card' &&
-        drawnElement.dataset.dropArea &&
+    if( drawnElement.dataset.dropArea &&
         drawnElement.dataset.dropArea == 'column'
     ){
         dropColumnExchange.call(this, e, drawnElement);
