@@ -8,21 +8,19 @@ function showArgs(){
 }
 /**/
 window.onload = function () {
-    // солнце взошло, растоманы! Пора распространять урожай ☺
-    window.dragStore = setupDragStore(); //console.log('setupDragStore', window.dragStore);
+    // Пора открывать лавочку, растоманы! ☺
+    window.dragStore = dragStoreInit(); //console.log('dragStoreInit', window.dragStore);
     // установить наблюдателей для перемещаемых объектов:
     // группы карточек по статусам, карточки между группами и панелями
     // ['dragstart', 'dragenter', 'dragover', 'dragleave'] ■
     // ['dragover', 'drop', 'dragend']
+    // выбираем все элементы, задействованные в перемещениях
     window.dragStore.setListeners('.column, .card, .box-panel');
-    //window.dragStore.setListeners('.card');
-    //window.dragStore.setListeners('.cards-box');
-    //window.dragStore.setListeners('.box-panel');
     console.log('%c======================================', 'color: rebeccapurple');
 };
 // тут будут закрома
-function setupDragStore() {
-    console.groupCollapsed('setupDragStore', showArgs(arguments));
+function dragStoreInit() {
+    console.groupCollapsed('dragStoreInit', showArgs(arguments));
     var drawnElement,
         drawnElementsPanel={},
         eventsMap = {
@@ -104,34 +102,6 @@ function setupDragStore() {
     console.groupEnd();
     return setupData;
 }
-
-/**
- * Добавить/удалить класс перемещаемого объекта
- * @param method
- */
-function handleClassMoving(method) {
-    console.groupCollapsed('%chandleClassMoving', 'font-weight:normal; color:orange', showArgs(arguments));
-        console.log({ method: method, classList: this.classList });
-    this.classList[method]('moving');
-        console.log('classList after removing: ', this.classList );
-    console.groupEnd();
-}
-/**
- * Добавить/удалить класс для объекта, НАД которым перемещаем
- * @param method
- */
-function handleClassOver(method) {
-    console.groupCollapsed('%chandleClassOver', 'font-weight:normal; color:goldenrod', showArgs(arguments));
-    if(this.classList){
-        console.log({ method: method, classList: this.classList });
-        this.classList[method]('over');
-        console.log('classList after removing: ', this.classList );
-    }/*else{
-        alert('No classList');
-        console.log('%cNo classList', 'color:red', this);
-    }*/
-    console.groupEnd();
-}
 /**
  * Предотвращает "всплывание" события
  * Применяет к активному элементу вызвов функции назначения класса "moving"
@@ -154,7 +124,7 @@ function dragStart(e) {
     // сохранить текущий активный элемент для обработки при следующих событиях
     dragStore.setDrawnElement(this);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.innerHTML);
+    e.dataTransfer.setData('text/html', this.outerHTML);
         console.log('e.dataTransfer',  e.dataTransfer);
     console.groupEnd();
 }
@@ -187,7 +157,7 @@ function dragEnter(e) {
  * @returns {boolean}
  */
 function dragOver(e) {
-    if(debugCnt!='dragOver') {
+    /*if(debugCnt!='dragOver') {
         debugCnt='dragOver';
         console.groupCollapsed('['+debugCnt+'] %cdragOver group', 'font-weight:normal; color:darkorange',{
             srcElement:arguments[0].srcElement,
@@ -199,14 +169,351 @@ function dragOver(e) {
         srcElement:arguments[0].srcElement,
         target:arguments[0].target,
         toElement:arguments[0].toElement
-    }, showArgs(arguments));
-
+    }, showArgs(arguments));*/
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+        /*console.log({ e:e, 'e.dataTransfer':e.dataTransfer});
+    console.groupEnd();*/
+    return false;
+}
+/**
+ * Шлюз для обработки события drop,
+ * внутри ─ разводка по процедурам с карточками
+ * @param e
+ * @returns {boolean}
+ */
+function drop(e) {
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='drop';
+    // e.target ─ элемент, на котором возникло событие drop
+    var dropTargetStart = e.target.dataset.dropTarget,
+        // элемент-инициатор перемещения; содержит класс "moving"
+        drawnElement = prepareToDrop(e),
+        dropTargetEnd, dropTargetEndPanel;
+    // исключить клонирование элементов
+    if( e.target.id && drawnElement.id &&
+        ( e.target.id==drawnElement.id ||
+         /**
+            Проверяется при перемещении карточки из группы на нижнюю панель.
+            Сработает, если копия карточки сбрасываетя непосредственно на
+            свой предыдущий клон. В противном случае требуется доп. проверка
+            (см. в следующем блоке) */
+          e.target.id==drawnElement.id+'_' )
+      ) {
+        console.log('drop, %creturn false', 'color: red', {
+            '0 e.target.id': e.target.id,
+            '1 drawnElement.id': drawnElement.id,
+            '2 e.target': e.target,
+            '3 drawnElement': drawnElement,
+            '4 e': e,
+            '5 this': this
+        });
+        return false;
+    }else {
+        console.log('%cblock 2', 'color: darkorange', {
+            '1 this.dataset.dropTarget':this.dataset.dropTarget,
+            '2 this.children':this.children
+        });
+        // проверить все элементы в контейнере
+        if(dropTargetEndPanel=this.dataset.dropTarget=='card-panel'){
+            for(var i= 0, j=this.children.length; i<j; i++){
+                // если обнаружен клон, прерываем выполнение функции
+                if(this.children[i].id==drawnElement.id+'_'){
+                    return false;
+                }
+            }
+        }
+        dropTargetEnd = drawnElement.dataset.dropTarget;
+    }
 
-        console.log({ e:e, 'e.dataTransfer':e.dataTransfer});
+    console.group('%cdrop', 'color:orange', {
+        '0 compare e.target & drawnElement':(e.target.id==drawnElement.id),
+        '1 dropTargetStart [e]': dropTargetStart, //
+        '2 dropTargetEnd [this]': dropTargetEnd,
+        '3 deep comparison':{
+            '1 drawnElement': drawnElement,
+            '2 e.target':e.target,
+            '3 innerHTML':(e.target.innerHTML==drawnElement.innerHTML),
+            '4 outerHMTL':(e.target.outerHTML==drawnElement.outerHTML),
+            '5 HTML':{
+                '0 inner':{
+                    '1 e.target': e.target.innerHTML,
+                    '2 drawnElement': drawnElement.innerHTML
+                },
+                '1 outer':{
+                    '1 e.target': e.target.outerHTML,
+                    '2 drawnElement': drawnElement.outerHTML
+                }
+            }
+        },
+        '4 sources':{
+            '1 e':e,
+            '2 this': this
+        }
+    }, showArgs(arguments));
+
+    // Меняем местами колонки
+    if( //dropTargetStart=='card' &&
+        drawnElement.dataset.dropArea &&
+        drawnElement.dataset.dropArea == 'column'
+    ){
+        dropColumnExchange.call(this, e, drawnElement);
+
+        console.log('%creturns false', 'color: red'); console.groupEnd();
+        return false;
+    }
+    // Перемещаем карточку на нижнюю панель
+    if(dropTargetEndPanel){
+        dropCardBottomPanelCopy.call(this, e, drawnElement);
+
+        console.log('%creturns false', 'color: navy'); console.groupEnd();
+        return false;
+    }
+    // Перемещаем карточку между нижними панелями
+    if(dropTargetEnd=='card-panel'){
+        dropCardBottomPanelRelocate.call(this, e, drawnElement);
+
+        console.log('%creturns false', 'color: navy'); console.groupEnd();
+        return false;
+    }
+
+    // карта вызываемых функций в остальных случаях
+    var dropsMap = {
+            'column':dropColumnExchange,
+            'card':dropCardRelocate,
+            'card-panel':dropCardBottomPanelCopy
+        },
+        funcIndex=Object.keys(dropsMap).indexOf(dropTargetStart);
+
+    if(funcIndex!=-1){
+        dropsMap[dropTargetStart].call(this, e, drawnElement);
+    }else {
+        if(dropTargetStart=this.dataset.dropTarget){
+            if(dropTargetStart=='card') {
+                dropCardRelocateBack.call(this, e, drawnElement);
+            }
+        }else{
+            document.querySelector('.issues').innerHTML='Неизвестный тип dropTargetStart: '+dropTargetStart;
+        }
+    }
+        console.log('%creturns false', 'color: navy');
     console.groupEnd();
     return false;
+}
+/**
+ * Поменять местами группу карточек
+ * @param e ─ event
+ * @param drawnElement ─ target-event
+ */
+function dropColumnExchange(e, drawnElement){
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='dropColumnExchange';
+
+    console.groupCollapsed('%c dropColumnExchange', 'color:white; background-color: blue; padding:4px 10px', showArgs(arguments));
+    console.log({
+        '1 compare elements': (drawnElement == this),
+        '2 e': e,
+        '3 drawnElement': drawnElement,
+        '4 this': this,
+        '5 inner':{
+            'drawnElement.innerHTML':drawnElement.innerHTML,
+            'this.innerHTML':this.innerHTML
+        },
+        '6 outer':{
+            'drawnElement.outerHTML':drawnElement.outerHTML,
+            'this.outerHTML':this.outerHTML
+        }
+    });
+    // Если собираемся сбрасывать не туда же, откуда пришли
+    if (drawnElement != this) {
+        var // найти нужную колонку, если влезли глубже, чем надо
+            findColumn = function(toColumn, i){
+                if(toColumn.dataset.dropArea &&
+                    toColumn.dataset.dropArea=='column'){
+                    return toColumn;
+                }else{
+                    if(i>=10){
+                        alert('Группа карточек не найдена после '+i+' итераций');
+                        console.warn('Последняя найденная колонка: ', toColumn);
+                        return false;
+                    }
+                    i=(!i)? 1:i+1;
+                    findColumn(toColumn.parentNode, i);
+                }
+            },
+            toColumn=findColumn(this);
+        // не повезло
+        if(!toColumn) return false;
+
+        // поменять местами контент колонок
+        drawnElement.outerHTML = toColumn.outerHTML;
+        toColumn.outerHTML = e.dataTransfer.getData('text/html');
+        console.log('apply this.outerHTML from e.dataTransfer: ', toColumn.outerHTML);
+    }
+    console.groupEnd();
+}
+/**
+ * Переместить карточку в другую группу
+ * @param e ─ event
+ * @param drawnElement ─ target-event
+ */
+function dropCardRelocate(e, drawnElement) { // clarify: Нельзя ли унифицировать?
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='dropCardRelocate';
+    console.group('%c dropCardRelocate', 'font-weight:normal; color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
+    console.log({ '1 e.target': e.target, '2 this':this, '3 drawnElement':drawnElement });
+    // Если собираемся сбрасывать не туда же, откуда пришли
+    if (drawnElement != this) {
+        e.target.parentNode.insertBefore(drawnElement, e.target);
+        // добавить элемент в конец группы
+        //this.parentNode.appendChild(drawnElement);
+    }
+    console.groupEnd();
+}
+/**
+ * Переместить элемент в группу, из которой извлекались карточки
+ * @param e
+ * @param drawnElement
+ */
+function dropCardRelocateBack(e, drawnElement){
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='dropCardRelocate';
+    console.group('%c dropCardRelocateBack', 'font-weight:normal; color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
+    // Если собираемся сбрасывать не туда же, откуда пришли
+    if (drawnElement != this) {
+        // добавить элемент в конец группы
+        e.target.appendChild(drawnElement);
+    }
+    console.groupEnd();
+}
+/**
+ * Переместить карточку на другую панель
+ * @param e
+ * @param drawnElement
+ */
+function dropCardBottomPanelRelocate(e, drawnElement){
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='dropCardRelocate';
+    console.groupCollapsed('%c dropCardBottomPanelRelocate', 'color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
+    console.log('drawnElement: ', drawnElement);
+    // clarify: разобраться
+    if (drawnElement != this) {
+        // если сбрасываем на другую горизонтальную панель
+        if(e.target.dataset.dropTarget&&e.target.dataset.dropTarget=='card-panel'){
+            // добавить элемент в конец панели
+            e.target.appendChild(drawnElement);
+        }   //element.parentNode.appendChild(drawnElement);
+    }
+    console.groupEnd();
+}
+/**
+ * копировать Карточку на нижнюю панель
+ * @param e
+ * @param drawnElement
+ */
+function dropCardBottomPanelCopy(e, drawnElement) {
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='dropCardBottomPanelCopy';
+    console.groupCollapsed('%c dropCardBottomPanelCopy', 'color:rebeccapurple', showArgs(arguments));
+    var taskId = getTaskId(drawnElement),
+        drawnElementPanel = dragStore.getDrawnElement(taskId),
+        row= e.target, clone;
+    /**
+     если пытаемся засунуть карточку внутрь другой карточки,
+     передвинем всё на уровень выше */
+    if( e.target.dataset.dropTarget &&
+        e.target.dataset.dropTarget=='card') {
+        row = row.parentNode;
+    }
+    /**
+     если пытались засунули ещё глубже -- внутрь блока с командой,
+     удаляющей карточку, поднимемся выше на 2 уровня   */
+    if( e.target.parentNode.dataset.dropTarget &&
+        e.target.parentNode.dataset.dropTarget=='card'){
+        row = row.parentNode.parentNode;
+    }
+
+        console.log({ drawnElement:drawnElement, taskId:taskId, drawnElementPanel:drawnElementPanel, row:row });
+    clone = drawnElement.cloneNode(true);
+    clone.id=clone.id+'_';
+    // удалить с клона класс-эффект
+    handleClassMoving.call(clone, 'remove');
+    console.log('clone: ', clone);
+    /** добавить в конец панели; да, можно сделать
+        ещё красивше, но совершенству нет предела вообще */
+    row.appendChild(clone);
+    console.log('row after adding clone: ', row);
+    dragStore.setDrawnElement(clone, taskId);
+    console.groupEnd();
+}
+/**
+ * Применяет к активному элементу функцию удаления класса "moving"
+ * @param  e ─ event
+ */
+function dragEnd(e) {
+    if(debugCnt=='dragOver') console.groupEnd();
+    console.groupCollapsed('%cdragEnd', 'background-color: #333; color: white; padding:4px 10px',{
+        srcElement:arguments[0].srcElement,
+        target:arguments[0].target,
+        toElement:arguments[0].toElement
+    }, showArgs(arguments));
+    if (e.stopPropagation) { // предотвратить дальнейшее распространение
+        e.stopPropagation();
+    }
+    var targetAreaOver, targetAreaMoving;
+    if(targetAreaMoving=document.querySelector('.moving'))
+        handleClassMoving.call(targetAreaMoving, 'remove');
+    console.log({'this': this, '.moving': document.querySelector('.moving')});
+    // задержка для красоты ☻
+    setTimeout(function () {
+        if (targetAreaOver = document.querySelector('.over'))
+            handleClassOver.call(targetAreaOver, 'remove');
+    }, 200);
+    console.groupEnd();
+    console.log('%c*******************************************************', 'color: orange');
+    debugCnt=null;
+}
+// - Мини-сервисы -
+/**
+ * Получить id задачи
+ * @param element
+ * @returns {string}
+ */
+function getTaskId(element){
+    if(debugCnt=='dragOver') console.groupEnd();
+    debugCnt='getTaskId';
+
+    console.groupCollapsed('%cgetTaskId', 'color:blue', showArgs(arguments));
+    console.log('return: ', element.id.substr(4));
+    console.groupEnd();
+    return element.id.substr(4);
+}
+/**
+ * Добавить/удалить класс перемещаемого объекта
+ * @param method
+ */
+function handleClassMoving(method) {
+    console.groupCollapsed('%chandleClassMoving', 'font-weight:normal; color:orange', showArgs(arguments));
+    console.log({ method: method, this:this, classList: this.classList });
+    this.classList[method]('moving');
+    console.log('classList after removing: ', this.classList );
+    console.groupEnd();
+}
+/**
+ * Добавить/удалить класс для объекта, НАД которым перемещаем
+ * @param method
+ */
+function handleClassOver(method) {
+    console.groupCollapsed('%chandleClassOver', 'font-weight:normal; color:goldenrod', showArgs(arguments));
+    if(this.classList){
+        console.log({ method: method, classList: this.classList });
+        this.classList[method]('over');
+        console.log('classList after removing: ', this.classList );
+    }/*else{
+     alert('No classList');
+     console.log('%cNo classList', 'color:red', this);
+     }*/
+    console.groupEnd();
 }
 /**
  * Применяет к пассивному элементу функцию удаления класса "over"
@@ -226,34 +533,8 @@ function dragLeave(e) {
         e.stopPropagation();
     }
     handleClassOver.call(this, 'remove');
-        console.log('this:', this);
+    console.log('this:', this);
     console.groupEnd();
-}
-/**
- * Применяет к активному элементу функцию удаления класса "moving"
- * @param  e ─ event
- */
-function dragEnd(e) {
-    if(debugCnt=='dragOver') console.groupEnd();
-    console.groupCollapsed('%cdragEnd', 'background-color: #333; color: white; padding:4px 10px',{
-        srcElement:arguments[0].srcElement,
-        target:arguments[0].target,
-        toElement:arguments[0].toElement
-    }, showArgs(arguments));
-    if (e.stopPropagation) { // предотвратить дальнейшее распространение
-        e.stopPropagation();
-    }
-    handleClassMoving.call(this, 'remove');
-        console.log({'this': this, '.moving': document.querySelector('.moving')});
-    var targetAreaOver, targetAreaMoving;
-    // задержка для красоты ☻
-    setTimeout(function () {
-        if (targetAreaOver = document.querySelector('.over'))
-            handleClassOver.call(targetAreaOver, 'remove');
-    }, 200);
-    console.groupEnd();
-    console.log('%c*******************************************************', 'color: orange');
-    debugCnt=null;
 }
 /**
  * Выполнить стандартные действия перед "сбрасыванием" элемента
@@ -269,174 +550,10 @@ function prepareToDrop(e) {
         e.stopPropagation();
     }
     var drawnElement = dragStore.getDrawnElement();
-        console.log('return: ', drawnElement);
+    console.log('return: ', drawnElement);
     console.groupEnd();
     // получить последний сохранённый элемент
     return drawnElement;
-}
-/**
- * Универсальная функция, внутри ─ разводка по типам элементов
- * @param e
- * @returns {boolean}
- */
-function drop(e) {
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='drop';
-    // e.target ─ откуда
-    var dropTarget = e.target.dataset.dropTarget,
-        drawnElement = prepareToDrop(e);
-
-    console.group('%cdrop', 'color:orange', {
-        '0 e':e,
-        '1 this': this,
-        '2 dropTarget': dropTarget,
-        '2 dropTarget2': this.dataset.dropTarget,
-        '4 drawnElement': drawnElement
-    }, showArgs(arguments));
-
-    // Если перемещаем карточку, находящуюся в нижней панели
-    if( drawnElement &&
-        drawnElement.dataset.dropTarget &&
-        drawnElement.dataset.dropTarget=='card-panel'
-      ){
-        dropCardRelocate.call(this, e, drawnElement);
-        console.log('%creturns false', 'color: navy');
-        console.groupEnd();
-        return false;
-    }
-
-    var dropsMap = {
-            'column':dropColumn,
-            'card':dropCard,
-            'card-panel':dropCardPanel
-        },
-        funcIndex=Object.keys(dropsMap).indexOf(dropTarget);
-
-    if(funcIndex!=-1){
-        dropsMap[dropTarget].call(this, e, drawnElement);
-    }else {
-        if(dropTarget=this.dataset.dropTarget){
-            if(dropTarget=='card') {
-                dropCardBack.call(this, e, drawnElement);
-            }
-        }else{
-            document.querySelector('.issues').innerHTML='Неизвестный тип dropTarget: '+dropTarget;
-        }
-    }
-        console.log('%creturns false', 'color: navy');
-    console.groupEnd();
-    return false;
-}
-/**
- * Сбросить группу карточек
- * @param e ─ event
- * @param element ─ target-event
- */
-function dropColumn(e, drawnElement){
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropColumn';
-
-    console.groupCollapsed('%сdropColumn', 'color:white; background-color: blue; padding:4px 10px', showArgs(arguments));
-    // Если собираемся сбрасывать не туда же, откуда пришли
-    if (drawnElement != this) {
-        // поменять местами контент элементов
-        drawnElement.innerHTML = this.innerHTML;
-        console.log('set drawnElement.innerHTML as this.innerHTML: ', drawnElement.innerHTML);
-        this.innerHTML = e.dataTransfer.getData('text/html');
-        console.log('apply this.innerHTML from e.dataTransfer: ', this.innerHTML);
-    }
-    console.groupEnd();
-}
-/**
- * Сбросить карточку в другую группу
- * @param e ─ event
- * @param element ─ target-event
- */
-function dropCard(e, drawnElement) { // clarify: Нельзя ли унифицировать?
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropCard';
-    console.group('%cdropCard', 'font-weight:normal; color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
-    console.log({ '1 e.target': e.target, '2 this':this, '3 drawnElement':drawnElement });
-    // Если собираемся сбрасывать не туда же, откуда пришли
-    if (drawnElement != this) {
-        // добавить элемент в конец группы
-        this.parentNode.appendChild(drawnElement);
-    }
-    console.groupEnd();
-}
-/**
- * Переместить элемент в группу, из которой извлекались карточки
- * @param e
- * @param drawnElement
- */
-function dropCardBack(e, drawnElement){
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropCard';
-    console.group('%cdropCard', 'font-weight:normal; color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
-    // Если собираемся сбрасывать не туда же, откуда пришли
-    if (drawnElement != this) {
-        // добавить элемент в конец группы
-        e.target.appendChild(drawnElement);
-    }
-    console.groupEnd();
-}
-/**
- * Переместить карточку на другую панель
- * @param e
- * @param drawnElement
- */
-function dropCardRelocate(e, drawnElement){
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropCard';
-    console.groupCollapsed('%cdropCardRelocate', 'color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
-    console.log('drawnElement: ', drawnElement);
-    // clarify: разобраться
-    if (drawnElement != this) {
-        // если сбрасываем на другую горизонтальную панель
-        if(e.target.dataset.dropTarget&&e.target.dataset.dropTarget=='card-panel'){
-            // добавить элемент в конец панели
-            e.target.appendChild(drawnElement);
-        }   //element.parentNode.appendChild(drawnElement);
-    }
-    console.groupEnd();
-}
-/**
- * копировать task на нижнюю панель
-  */
-function dropCardPanel(e, drawnElement) {
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropCardPanel';
-    console.groupCollapsed('['+debugCnt+'] %cdropCardPanel', 'color:rebeccapurple', showArgs(arguments));
-    console.log('drawnElement', drawnElement);
-    var taskId = getTaskId(drawnElement),
-        drawnElementPanel = dragStore.getDrawnElement(taskId),
-        row = e.target, clone;
-    console.log({ drawnElement:drawnElement, taskId:taskId, drawnElementPanel:drawnElementPanel, row:row });
-    if(!drawnElementPanel || drawnElement.innerHTML != drawnElementPanel.innerHTML){
-        clone = drawnElement.cloneNode(true);
-        // удалить с клона класс-эффект
-        handleClassMoving.call(clone, 'remove');
-        console.log('clone: ', clone);
-        //
-        row.appendChild(clone);
-        console.log('row after adding clone: ', row);
-        dragStore.setDrawnElement(clone, taskId);
-    }
-    console.groupEnd();
-}
-/**
- * Получить id задачи
- * @param element
- * @returns {string}
- */
-function getTaskId(element){
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='getTaskId';
-
-    console.groupCollapsed('%cgetTaskId', 'color:blue', showArgs(arguments));
-    console.log('return: ', element.id.substr(4));
-    console.groupEnd();
-    return element.id.substr(4);
 }
 /**
  * Удалить копию задачи с нижней панели

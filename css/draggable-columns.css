@@ -10,6 +10,7 @@ h1, h2, h3, h4, h5, header{
     font-family: Verdana, serif;
 }
 header{
+    color: whitesmoke;
     font-weight: bold;
     background-color: #444;
     margin: -10px -10px 10px;
@@ -99,6 +100,7 @@ main > h5{
 }
 .card.processed{
     background-color: #38B2AE;
+    color:white;
 }
 .card.done{
     background-color: #F3FF00;
@@ -108,7 +110,6 @@ main > h5{
     min-height: 127px;
 }
 .cards{
-    color:white;
     padding:10px;
 }
 .cards-container{
@@ -136,7 +137,6 @@ main > h5{
     z-index: 1;
 }
 .moving{
-    /*border:solid 2px #adadad*/
     opacity: 0.75;
 }
 .row{

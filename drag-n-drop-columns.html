@@ -120,37 +120,37 @@
     </div>
 
     <div id="box-columns" class="cards-container">
-        <div draggable="true" data-drop-target="card" class="column">
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <div class="bg-violet cards new">
                 <header data-drop-target="column">Not started</header>
                 <div id="task0" data-drop-target="card" draggable="true" class="card new">Тут некая задача из тех, что назначены, но ещё не начаты
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
-                <div id="task1" data-drop-target="card" draggable="true" class="card new">И тут тоже задача из того же разряда
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                <div id="task1" data-drop-area="card" data-drop-target="card" draggable="true" class="card new">И тут тоже задача из того же разряда
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
             </div>
         </div>
-        <div draggable="true" data-drop-target="card" class="column">
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <div class="bg-orange cards processed">
                 <header data-drop-target="column">In progress</header>
                 <div id="task2" data-drop-target="card" draggable="true" class="card processed">А это уже задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
                 <div id="task3" data-drop-target="card" draggable="true" class="card processed">Эти задачи можно перемещать туда-сюда между их родительскими контейнерами
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
                 <div id="task4" data-drop-target="card" draggable="true" class="card processed">Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
 
             </div>
         </div>
-        <div draggable="true" data-drop-target="card" class="column">
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <div class="bg-azure cards done">
                 <header data-drop-target="column">Done</header>
                 <div id="task5" data-drop-target="card" draggable="true" class="card done">Сделано то-то и то-то. Заказчик в предвкушении, члены команды счастливы
-                    <div class="remove" onclick="removeIssueCopyFromPanel(this)"></div>
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
             </div>
         </div>
