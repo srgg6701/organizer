@@ -317,11 +317,29 @@ function dropColumnExchange(e, drawnElement){
     });
     // Если собираемся сбрасывать не туда же, откуда пришли
     if (drawnElement != this) {
+        var // найти нужную колонку, если влезли глубже, чем надо
+            findColumn = function(toColumn, i){
+                if(toColumn.dataset.dropArea &&
+                    toColumn.dataset.dropArea=='column'){
+                    return toColumn;
+                }else{
+                    if(i>=10){
+                        alert('Группа карточек не найдена после '+i+' итераций');
+                        console.warn('Последняя найденная колонка: ', toColumn);
+                        return false;
+                    }
+                    i=(!i)? 1:i+1;
+                    findColumn(toColumn.parentNode, i);
+                }
+            },
+            toColumn=findColumn(this);
+        // не повезло
+        if(!toColumn) return false;
         // поменять местами контент элементов
-        drawnElement.innerHTML = this.innerHTML;
-        console.log('set drawnElement.innerHTML as this.innerHTML: ', drawnElement.innerHTML);
-        this.innerHTML = e.dataTransfer.getData('text/html');
-        console.log('apply this.innerHTML from e.dataTransfer: ', this.innerHTML);
+        drawnElement.innerHTML = toColumn.innerHTML;
+        console.log('set drawnElement.innerHTML as toColumn.innerHTML: ', drawnElement.innerHTML);
+        toColumn.innerHTML = e.dataTransfer.getData('text/html');
+        console.log('apply toColumn.innerHTML from e.dataTransfer: ', toColumn.innerHTML);
     }
     console.groupEnd();
 }
