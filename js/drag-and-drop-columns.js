@@ -124,7 +124,7 @@ function dragStart(e) {
     // сохранить текущий активный элемент для обработки при следующих событиях
     dragStore.setDrawnElement(this);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.outerHTML);
+    e.dataTransfer.setData('text/html', this.innerHTML);
         console.log('e.dataTransfer',  e.dataTransfer);
     console.groupEnd();
 }
@@ -253,7 +253,7 @@ function drop(e) {
     }, showArgs(arguments));
 
     // Меняем местами колонки
-    if( //dropTargetStart=='card' &&
+    if( dropTargetStart=='card' &&
         drawnElement.dataset.dropArea &&
         drawnElement.dataset.dropArea == 'column'
     ){
@@ -311,44 +311,17 @@ function dropColumnExchange(e, drawnElement){
 
     console.groupCollapsed('%c dropColumnExchange', 'color:white; background-color: blue; padding:4px 10px', showArgs(arguments));
     console.log({
-        '1 compare elements': (drawnElement == this),
-        '2 e': e,
-        '3 drawnElement': drawnElement,
-        '4 this': this,
-        '5 inner':{
-            'drawnElement.innerHTML':drawnElement.innerHTML,
-            'this.innerHTML':this.innerHTML
-        },
-        '6 outer':{
-            'drawnElement.outerHTML':drawnElement.outerHTML,
-            'this.outerHTML':this.outerHTML
-        }
+        '0 e': e,
+        '1 drawnElement': drawnElement,
+        '2 this': this
     });
     // Если собираемся сбрасывать не туда же, откуда пришли
     if (drawnElement != this) {
-        var // найти нужную колонку, если влезли глубже, чем надо
-            findColumn = function(toColumn, i){
-                if(toColumn.dataset.dropArea &&
-                    toColumn.dataset.dropArea=='column'){
-                    return toColumn;
-                }else{
-                    if(i>=10){
-                        alert('Группа карточек не найдена после '+i+' итераций');
-                        console.warn('Последняя найденная колонка: ', toColumn);
-                        return false;
-                    }
-                    i=(!i)? 1:i+1;
-                    findColumn(toColumn.parentNode, i);
-                }
-            },
-            toColumn=findColumn(this);
-        // не повезло
-        if(!toColumn) return false;
-
-        // поменять местами контент колонок
-        drawnElement.outerHTML = toColumn.outerHTML;
-        toColumn.outerHTML = e.dataTransfer.getData('text/html');
-        console.log('apply this.outerHTML from e.dataTransfer: ', toColumn.outerHTML);
+        // поменять местами контент элементов
+        drawnElement.innerHTML = this.innerHTML;
+        console.log('set drawnElement.innerHTML as this.innerHTML: ', drawnElement.innerHTML);
+        this.innerHTML = e.dataTransfer.getData('text/html');
+        console.log('apply this.innerHTML from e.dataTransfer: ', this.innerHTML);
     }
     console.groupEnd();
 }
@@ -460,10 +433,9 @@ function dragEnd(e) {
     if (e.stopPropagation) { // предотвратить дальнейшее распространение
         e.stopPropagation();
     }
-    var targetAreaOver, targetAreaMoving;
-    if(targetAreaMoving=document.querySelector('.moving'))
-        handleClassMoving.call(targetAreaMoving, 'remove');
+    handleClassMoving.call(this, 'remove');
     console.log({'this': this, '.moving': document.querySelector('.moving')});
+    var targetAreaOver, targetAreaMoving;
     // задержка для красоты ☻
     setTimeout(function () {
         if (targetAreaOver = document.querySelector('.over'))
@@ -494,7 +466,7 @@ function getTaskId(element){
  */
 function handleClassMoving(method) {
     console.groupCollapsed('%chandleClassMoving', 'font-weight:normal; color:orange', showArgs(arguments));
-    console.log({ method: method, this:this, classList: this.classList });
+    console.log({ method: method, classList: this.classList });
     this.classList[method]('moving');
     console.log('classList after removing: ', this.classList );
     console.groupEnd();
