@@ -121,22 +121,12 @@
 
     <div id="box-columns" class="cards-container">
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
-            <header data-drop-target="column">Not started</header>
-            <div data-task-status="new">
-                <div id="task0" data-task-status="new" data-drop-target="card" draggable="true" class="card">Тут некая
+            <header data-drop-target="column">In progress</header>
+            <div data-task-status="processed">
+                <div id="task0" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Тут некая
                     задача из тех, что назначены, но ещё не начаты
                     <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
-                <div id="task1" data-task-status="new" data-drop-area="card" data-drop-target="card" draggable="true"
-                     class="card">И тут тоже задача из того же разряда
-                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
-                </div>
-            </div>
-        </div>
-        <div draggable="true" data-drop-area="column" data-drop-target="card"
-             class="column">
-            <header data-drop-target="column">In progress</header>
-            <div data-task-status="processed">
                 <div id="task2" data-task-status="processed" data-drop-target="card" draggable="true" class="card">А это
                     уже
                     задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
@@ -153,19 +143,26 @@
             </div>
         </div>
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
+            <header data-drop-target="column">Not started</header>
+            <div data-task-status="new">
+                <div id="task1" data-task-status="new" data-drop-target="card" draggable="true" class="card">
+                    И тут тоже задача из того же разряда [1]
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+            </div>
+        </div>
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <header data-drop-target="column">Done</header>
             <div data-task-status="done">
-                <div id="task5" data-task-status="done" data-drop-target="card" draggable="true" class="card">Сделано
-                    то-то
-                    и то-то. Заказчик в предвкушении, члены команды счастливы
+                <div id="task5" data-task-status="done" data-drop-target="card" draggable="true" class="card">
+                    И тут тоже задача из того же разряда [2]
                     <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
             </div>
         </div>
     </div>
     <!--id="box-rows-1"-->
-    <section data-drop-area="panel" data-drop-target="card-panel"
-             class="cards-container bg-darkmarine box-panel"></section>
+    <section data-drop-area="panel" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></section>
 </main>
 <script src="js/drag-and-drop-columns.js"></script>
 <!--<script src="js/drag-and-drop-mdn.js"></script>-->
