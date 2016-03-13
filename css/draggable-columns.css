@@ -38,15 +38,15 @@ main > h5{
     user-select: none;
 }
 /* classes */
-.bg-violet {
+/*.bg-violet {
     background-color: #D063CA;
-}
-.bg-orange {
+}*/
+/*.bg-orange {
     background-color: #FFB500;
-}
-.bg-azure {
+}*/
+/*.bg-azure {
     background-color: #00FAFF;
-}
+}*/
 .bg-darkazure{
     background-color: rgba(0,175,200,1);
 }
@@ -94,23 +94,20 @@ main > h5{
 .cards-box{
     min-height: 68px;
 }
-.card.new{
+.card[data-task-status="new"]{
     background-color: #B0FF00;
     color: black;
 }
-.card.processed{
+.card[data-task-status="processed"]{
     background-color: #38B2AE;
     color:white;
 }
-.card.done{
+.card[data-task-status="done"]{
     background-color: #F3FF00;
     color: black;
 }
-.cards-container, .row, .cards{
+.cards-container, .row, .column{
     min-height: 127px;
-}
-.cards{
-    padding:10px;
 }
 .cards-container{
     overflow:auto;
@@ -121,7 +118,17 @@ main > h5{
     margin: auto 5px 10px;
 }
 .column{
+    padding:10px;
     width: 280px;
+}
+.column.new{
+    background-color: #D063CA;
+}
+.column.processed{
+    background-color: #FFB500;
+}
+.column.done{
+    background-color: #00FAFF;
 }
 .column.over {
     border: 2px dashed #514378;
