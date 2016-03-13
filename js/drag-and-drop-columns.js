@@ -320,20 +320,25 @@ function dropColumnExchange(e, drawnElement){
             },
             toColumn=findColumn(this);
         // не повезло
-        if(!toColumn) return false;
-
-        else{
+        if(!toColumn) {
+            return false;
+        }else{
             console.log({
                 drawnElement:drawnElement,
                 toColumn:toColumn
             });
         }
 
-
-        // поменять местами контент элементов
+        // поменять местами контент элементов и data-task-status
+        var taskStatus = toColumn.dataset.taskStatus;
+        // контент
         drawnElement.innerHTML = toColumn.innerHTML;
         console.log('set drawnElement.innerHTML as toColumn.innerHTML: ', drawnElement.innerHTML);
         toColumn.innerHTML = e.dataTransfer.getData('text/html');
+        // статус
+        //toColumn.dataset.taskStatus=drawnElement.dataset.taskStatus;
+        //drawnElement.dataset.taskStatus=taskStatus;
+
         console.log('apply toColumn.innerHTML from e.dataTransfer: ', toColumn.innerHTML);
     }
     console.groupEnd();
@@ -343,20 +348,24 @@ function dropColumnExchange(e, drawnElement){
  * @param e ─ event
  * @param drawnElement ─ target-event
  */
-function dropCardRelocate(e, drawnElement) { // clarify: Нельзя ли унифицировать?
+function dropCardRelocate(e, drawnElement) { 
     if(debugCnt=='dragOver') console.groupEnd();
     debugCnt='dropCardRelocate';
     console.group('%c dropCardRelocate', 'font-weight:normal; color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
-    console.log({ '1 e.target': e.target, '2 this':this, '3 drawnElement':drawnElement });
+    console.log({ '1 e.target': e.target, '2 drawnElement':drawnElement });
     // Если собираемся сбрасывать не туда же, откуда пришли
     if (drawnElement != this) {
         // назначим статус текущей группы (не заменять на класс!)
-        if(e.target.dataset.dropArea=='column'){
-            drawnElement.dataset.taskStatus=e.target.dataset.taskStatus;
-            e.target.appendChild(drawnElement);
-        }else{
+        if(e.target.dataset.dropTarget){
+            console.log('%cdirection: forward', 'background-color:brown');
+            // relocation forward
             drawnElement.dataset.taskStatus=e.target.parentNode.dataset.taskStatus;
             e.target.parentNode.insertBefore(drawnElement, e.target);
+        }else{
+            console.log('%cdirection: backward', 'background-color:violet');
+            // relocation backward
+            drawnElement.dataset.taskStatus=e.target.dataset.taskStatus;
+            e.target.appendChild(drawnElement);
         }
     }
     console.groupEnd();

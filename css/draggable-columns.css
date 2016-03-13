@@ -13,7 +13,6 @@ header{
     color: whitesmoke;
     font-weight: bold;
     background-color: #444;
-    margin: -10px -10px 10px;
     padding: 10px;
 }
 header, .card{
@@ -118,16 +117,19 @@ main > h5{
     margin: auto 5px 10px;
 }
 .column{
-    padding:10px;
     width: 280px;
 }
-.column.new{
+.column>[data-task-status]{
+    min-height: 88px;
+    padding:10px;
+}
+.column>[data-task-status="new"]{
     background-color: #D063CA;
 }
-.column.processed{
+.column>[data-task-status="processed"]{
     background-color: #FFB500;
 }
-.column.done{
+.column>[data-task-status="done"]{
     background-color: #00FAFF;
 }
 .column.over {

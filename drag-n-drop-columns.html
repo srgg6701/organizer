@@ -120,40 +120,46 @@
     </div>
 
     <div id="box-columns" class="cards-container">
-        <div draggable="true" data-task-status="new" data-drop-area="column" data-drop-target="card" class="column new">
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <header data-drop-target="column">Not started</header>
-            <div id="task0" data-task-status="new" data-drop-target="card" draggable="true" class="card">Тут некая
-                задача из тех, что назначены, но ещё не начаты
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+            <div data-task-status="new">
+                <div id="task0" data-task-status="new" data-drop-target="card" draggable="true" class="card">Тут некая
+                    задача из тех, что назначены, но ещё не начаты
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task1" data-task-status="new" data-drop-area="card" data-drop-target="card" draggable="true"
+                     class="card">И тут тоже задача из того же разряда
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
             </div>
-            <div id="task1" data-task-status="new" data-drop-area="card" data-drop-target="card" draggable="true"
-                 class="card">И тут тоже задача из того же разряда
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
-            </div>
-
         </div>
-        <div draggable="true" data-task-status="processed" data-drop-area="column" data-drop-target="card" class="column processed">
+        <div draggable="true" data-drop-area="column" data-drop-target="card"
+             class="column">
             <header data-drop-target="column">In progress</header>
-            <div id="task2" data-task-status="processed" data-drop-target="card" draggable="true" class="card">А это уже
-                задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+            <div data-task-status="processed">
+                <div id="task2" data-task-status="processed" data-drop-target="card" draggable="true" class="card">А это
+                    уже
+                    задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task3" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Эти
+                    задачи можно перемещать туда-сюда между их родительскими контейнерами
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
+                <div id="task4" data-task-status="processed" data-drop-target="card" draggable="true" class="card">
+                    Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
             </div>
-            <div id="task3" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Эти
-                задачи можно перемещать туда-сюда между их родительскими контейнерами
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
-            </div>
-            <div id="task4" data-task-status="processed" data-drop-target="card" draggable="true" class="card">
-                Перемещение задачи означает изменение её статуса и это -- стандартная опция её жизненного цикла
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
-            </div>
-
-
         </div>
-        <div draggable="true" data-task-status="done" data-drop-area="column" data-drop-target="card" class="column done">
+        <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <header data-drop-target="column">Done</header>
-            <div id="task5" data-task-status="done" data-drop-target="card" draggable="true" class="card">Сделано то-то
-                и то-то. Заказчик в предвкушении, члены команды счастливы
-                <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+            <div data-task-status="done">
+                <div id="task5" data-task-status="done" data-drop-target="card" draggable="true" class="card">Сделано
+                    то-то
+                    и то-то. Заказчик в предвкушении, члены команды счастливы
+                    <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
+                </div>
             </div>
         </div>
     </div>
