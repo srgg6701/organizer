@@ -163,7 +163,6 @@ function dragOver(e) {
  * @returns {boolean}
  */
 function drop(e) {
-    if(debugCnt=='dragOver') console.groupEnd();
     debugCnt='drop';
     // e.target ─ элемент, на котором возникло событие drop
     var dropTargetStart = e.target.dataset.dropTarget,
@@ -180,9 +179,12 @@ function drop(e) {
             Сработает, если копия карточки сбрасываетя непосредственно на
             свой предыдущий клон. В противном случае требуется доп. проверка
             (см. в следующем блоке) */
-          e.target.id==drawnElement.id+'_' )
-      ) {
-        console.log('%creturn false', 'color:red');
+          e.target.id==drawnElement.id+'_' ||
+          // если пытаемся переместить из панели в группу
+         ( drawnElement.id.lastIndexOf('_')==drawnElement.id.length-1 &&
+          e.target.id.lastIndexOf('_')==-1 )
+        )
+      ) { console.log('%creturn false', 'color:red');
         return false;
     }else {
         console.log('%cblock 2', 'color: darkorange', {
@@ -190,7 +192,7 @@ function drop(e) {
             '2 this.children':this.children
         });
         // проверить все элементы в контейнере
-        if(dropTargetEndPanel=this.dataset.dropTarget=='card-panel'){
+        if( dropTargetEndPanel=this.dataset.dropTarget=='card-panel'){
             for(var i= 0, j=this.children.length; i<j; i++){
                 // если обнаружен клон, прерываем выполнение функции
                 if(this.children[i].id==drawnElement.id+'_'){
