@@ -123,7 +123,8 @@
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
             <header data-drop-target="column">In progress</header>
             <div data-task-status="processed">
-                <div id="task0" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Тут некая
+                <div id="task0" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Тут
+                    некая
                     задача из тех, что назначены, но ещё не начаты
                     <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
@@ -162,8 +163,18 @@
         </div>
     </div>
     <!---->
-    <section id="box-rows-1" data-drop-area="panel" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></section>
-    <section id="box-rows-2" data-drop-area="panel" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></section>
+    <div draggable="true" data-drop-target="category-container">
+        <header>Catgory 1</header>
+        <section id="box-rows-1" data-drop-area="panel" data-drop-target="card-panel"
+                 class="cards-container bg-darkmarine box-panel">
+        </section>
+    </div>
+    <div draggable="true" data-drop-target="category-container">
+        <header>Catgory 2</header>
+        <section id="box-rows-2" data-drop-area="panel" data-drop-target="card-panel"
+                 class="cards-container bg-darkmarine box-panel">
+        </section>
+    </div>
 </main>
 <script src="js/drag-and-drop-columns.js"></script>
 <!--<script src="js/drag-and-drop-mdn.js"></script>-->
