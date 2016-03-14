@@ -386,20 +386,6 @@ function dropCardPanelRelocate(e, drawnElement){
     // Если собираемся сбрасывать не туда же, откуда пришли
     if (drawnElement != this) {
         e.target.appendChild(drawnElement);
-        /*if(e.target.dataset.dropTarget){
-            console.log('%cdirection: forward', 'background-color:brown');
-            // relocation forward
-            if(e.target.parentNode.dataset.taskStatus){
-
-                e.target.parentNode.insertBefore(drawnElement, e.target);
-            }
-        }else{
-            console.log('%cdirection: backward', 'background-color:violet');
-            // relocation backward
-            if(e.target.dataset.taskStatus){
-                e.target.appendChild(drawnElement);
-            }
-        }*/
     }
     console.groupEnd();
 }
@@ -408,7 +394,7 @@ function dropCardPanelRelocate(e, drawnElement){
  * @param e
  * @param drawnElement
  */
-function dropCardBottomPanelRelocate(e, drawnElement){
+/*function dropCardBottomPanelRelocate(e, drawnElement){
     if(debugCnt=='dragOver') console.groupEnd();
     debugCnt='dropCardRelocate';
     console.groupCollapsed('%c dropCardBottomPanelRelocate', 'color:white; background-color: #999; padding:4px 10px', showArgs(arguments));
@@ -422,19 +408,25 @@ function dropCardBottomPanelRelocate(e, drawnElement){
         }
     }
     console.groupEnd();
-}
+}*/
 /**
  * копировать Карточку на нижнюю панель
  * @param e
  * @param drawnElement
  */
 function dropCardBottomPanelCopy(e, drawnElement) {
-    if(debugCnt=='dragOver') console.groupEnd();
     debugCnt='dropCardBottomPanelCopy';
     console.groupCollapsed('%c dropCardBottomPanelCopy', 'color:rebeccapurple', showArgs(arguments));
     var taskId = getTaskId(drawnElement),
         drawnElementPanel = dragStore.getDrawnElement(taskId),
-        row= e.target, clone;
+        row= e.target, clone, cloned = document.getElementById('task'+taskId+'_');
+
+    // выяснить, нет ли уже такой (в т.ч. на панелях)
+    if(cloned){
+        console.log('%cблокировано дублирование карточки id '+taskId+'_', 'color: red');
+        console.groupEnd();
+        return false;
+    }
     /**
      если пытаемся засунуть карточку внутрь другой карточки,
      передвинем всё на уровень выше */
