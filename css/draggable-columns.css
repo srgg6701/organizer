@@ -29,7 +29,7 @@ main > h4,
 main > h5{
     padding: 0 5px;
 }
-[data-drop-target="category-container"]{
+[data-drop-area="category-container"]{
     margin-top: 10px;
 }
 [draggable] {

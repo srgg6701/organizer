@@ -15,7 +15,7 @@ window.onload = function () {
     // ['dragstart', 'dragenter', 'dragover', 'dragleave'] ■
     // ['dragover', 'drop', 'dragend']
     // выбираем все элементы, задействованные в перемещениях
-    window.dragStore.setListeners('.column, .card, .box-panel');
+    window.dragStore.setListeners('.column, .card, .box-panel, .box-panel-container');
     console.log('%c======================================', 'color: rebeccapurple');
 };
 // тут будут закрома
@@ -189,7 +189,7 @@ function drop(e) {
         transferParams = dragStore.getTransferParams(),
         transferDatasetThis = transferParams.eThis.dataset,
         transferDatasetTarget = transferParams.eTarget.dataset,
-        //dropTargetEnd,
+        drawnElementDropTarget,
         dropTargetEndPanel;
 
     console.group('%cdrop', 'color:orange', {
@@ -197,7 +197,7 @@ function drop(e) {
         '2 this': this,
         '3 drawnElementDropArea':drawnElementDropArea,
         '4 dropTargetStart': dropTargetStart,
-        //'5 dropTargetEnd': drawnElement.dataset.dropTarget,
+        '5 drawnElementDropTarget': drawnElement.dataset.dropTarget,
         '6 dropTargetEndPanel': (this.dataset.dropTarget=='card-panel'),
         '7 e': e,
         '8 e.srcElement': e.srcElement,
@@ -206,21 +206,19 @@ function drop(e) {
         '11 transferParams': transferParams
     }, showArgs(arguments));
 
-    // исключить клонирование элементов
     // пытаемся переместить из панели в группу или между панелями
     if( transferDatasetThis.dropArea &&
-        transferDatasetThis.dropArea=='panel'&&
-        dropTargetStart
+        transferDatasetThis.dropArea=='panel'
       ){
-        if( dropTargetStart =='card'||dropTargetStart =='card-panel' ){
+        if(dropTargetStart){
             if( dropTargetStart =='card-panel' &&
                 transferParams.eThis.id!== e.target.id
             ){
                 dropCardPanelRelocate.call(this, e, drawnElement);
             }
-            console.log('%creturn false', 'color:green; font-size:13px');console.groupEnd();
-            return false;
         }
+        console.log('%creturn false', 'color:green; font-size:13px');console.groupEnd();
+        return false;
     }
 
     if( e.target.id && drawnElement.id &&
@@ -248,9 +246,18 @@ function drop(e) {
                     return false;
                 }
             }
-        }   //dropTargetEnd = drawnElement.dataset.dropTarget;
+        }
+        drawnElementDropTarget = drawnElement.dataset.dropTarget;
     }
-
+    // перемещаем панели
+    if( drawnElementDropArea && thisDropArea &&
+        drawnElementDropArea=='category-container' &&
+        thisDropArea=='category-container'
+    ){
+        dropPanelExchange.call(this, e, drawnElement);
+        console.log('%creturns false', 'color: navy'); console.groupEnd();
+        return false;
+    }
     // перемещали колонки
     if(drawnElementDropArea=='column'){
         dropColumnExchange.call(this, e, drawnElement);
@@ -258,7 +265,13 @@ function drop(e) {
         return false;
     }else{
         // перемещали карточки на нижнюю панель и между панелями
-        if(thisDropArea && thisDropArea=='panel'){
+        if( thisDropArea && thisDropArea=='panel' ||
+            ( drawnElementDropTarget &&
+              drawnElementDropTarget=='card' &&
+              dropTargetStart &&
+              dropTargetStart =='card-panel'
+            )
+          ){
             dropCardBottomPanelCopy.call(this, e, drawnElement);
             console.log('%creturns false', 'color: navy'); console.groupEnd();
             return false;
@@ -267,10 +280,7 @@ function drop(e) {
         console.log('%creturns false', 'color: navy'); console.groupEnd();
         return false;
     }
-    // todo: удалить после тестирования
-    document.querySelector('.issues').innerHTML='Неизвестный тип dropTargetStart: '+dropTargetStart;
-
-        console.log('%creturns false', 'color: navy');
+    // для подстраховки
     console.groupEnd();
     return false;
 }
@@ -280,9 +290,6 @@ function drop(e) {
  * @param drawnElement ─ target-event
  */
 function dropColumnExchange(e, drawnElement){
-    if(debugCnt=='dragOver') console.groupEnd();
-    debugCnt='dropColumnExchange';
-
     console.groupCollapsed('%c dropColumnExchange', 'color:white; background-color: blue; padding:4px 10px', showArgs(arguments));
         console.log({
             '0 e': e,
@@ -323,24 +330,31 @@ function dropColumnExchange(e, drawnElement){
                 toColumn:toColumn
             });
         }
-
-        /*console.log('BEFORE', {
-            '0 toColumn': toColumn,
-            '1 toColumn.innerHTML' : toColumn.innerHTML,
-            '2 data': e.dataTransfer.getData('text/html'),
-            '3 data text': e.dataTransfer.getData('text/plain')
-        });*/
         // контент
         drawnElement.innerHTML = toColumn.innerHTML;
-        //console.log('set drawnElement.innerHTML as toColumn.innerHTML: ', drawnElement.innerHTML);
         toColumn.innerHTML = e.dataTransfer.getData('text/html');
-        //console.log('apply toColumn.innerHTML from e.dataTransfer: ', toColumn.innerHTML);
-        /*console.log('AFTER', {
-            '0 drawnElement' : drawnElement,
-            '1 drawnElement.innerHTML' : drawnElement.innerHTML,
-            '1 toColumn': toColumn,
-            '1 toColumn.innerHTML': toColumn.innerHTML
-        });*/
+    }
+    console.groupEnd();
+}
+/**
+ * Поменять местами панели
+ * @param e ─ event
+ * @param drawnElement ─ target-event
+ */
+function dropPanelExchange(e, drawnElement){
+    console.groupCollapsed('%c dropPanelExchange', 'color:white; background-color: blue; padding:4px 10px', showArgs(arguments));
+    console.log({
+        '0 e': e,
+        '1 drawnElement': drawnElement,
+        '2 this': this
+    });
+    // Если собираемся сбрасывать не туда же, откуда пришли
+    if (drawnElement != this) {
+        var storedId = drawnElement.id;
+        drawnElement.innerHTML = this.innerHTML;
+        this.innerHTML = e.dataTransfer.getData('text/html');
+        drawnElement.id=this.id;
+        this.id=storedId;
     }
     console.groupEnd();
 }
