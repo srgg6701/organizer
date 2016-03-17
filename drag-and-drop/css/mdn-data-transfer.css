@@ -1,0 +1,25 @@
+[draggable]{
+    display: table;
+    margin: 4px 0;
+}
+div {
+    margin: 0;
+    padding: 2em;
+}
+#src_copy, #src_move  {
+    color: blue;
+}
+#dest_copy, #dest_move {
+    border: 5px solid blue;
+    min-height: 80px;
+    overflow: auto;
+}
+.bg-yellow{
+    background-color: yellow;
+}
+.bg-orange{
+    background-color: orange;
+}
+.bg-greenyellow{
+    background-color: greenyellow;
+}

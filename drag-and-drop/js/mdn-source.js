@@ -7,6 +7,14 @@ function dragstart_handler(ev) {
     ev.dataTransfer.effectAllowed = "copy";
 }
 
+function dragover_handler(ev) {
+    console.log("dragOver: dropEffect = " + ev.dataTransfer.dropEffect + " ; effectAllowed = " + ev.dataTransfer.effectAllowed);
+    ev.preventDefault();
+    // Set the dropEffect to move
+    //ev.dataTransfer.dropEffect = "move"
+    ev.dataTransfer.dropEffect = "copy";
+}
+
 function drop_handler(ev) {
     console.log("drop: dropEffect = " + ev.dataTransfer.dropEffect + " ; effectAllowed = " + ev.dataTransfer.effectAllowed);
     ev.preventDefault();
@@ -20,10 +28,8 @@ function drop_handler(ev) {
     }
 }
 
-function dragover_handler(ev) {
-    console.log("dragOver: dropEffect = " + ev.dataTransfer.dropEffect + " ; effectAllowed = " + ev.dataTransfer.effectAllowed);
-    ev.preventDefault();
-    // Set the dropEffect to move
-    //ev.dataTransfer.dropEffect = "move"
-    ev.dataTransfer.dropEffect = "copy";
+
+function cancel_dropping(){
+    console.warn('Cancel dropping');
+    return false;
 }

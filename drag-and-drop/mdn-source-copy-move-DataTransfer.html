@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <title>Using Drag and Drop API to copy and move elements</title>
+    <!--
+       This example demonstrates using various HTML Drag and Drop interfaces including:
+       * Global "draggable" attribute
+       * Event handlers for dragstart, dragover and drop
+       * Global event handlers for ondragstart, ondragover and ondrop
+       * Using the DataTransfer interface to copy and move elements (<div>)
+    -->
+    <link rel="stylesheet" href="css/mdn-data-transfer.css">
+    <script src="js/mdn-data-transfer.js"></script>
+</head>
+<body>
+<a href="http://mdn.github.io/drag-and-drop/copy-move-DataTransfer.html">http://mdn.github.io/drag-and-drop/copy-move-DataTransfer.html</a>
+<h1>Drag and Drop: Copy and Move elements with <code>DataTransfer</code></h1>
+
+<div draggable="true" class="bg-yellow" id="src_copy1" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+    Select this element and drag to the <strong>Copy Drop Zone 1</strong>.
+</div>
+
+
+<div draggable="true" class="bg-orange" id="src_copy2" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+    Select this element and drag to the <strong>Copy Drop Zone 2</strong>.
+</div>
+
+
+<div id="dest_copy" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Copy Drop Zone</strong>
+</div>
+
+<div draggable="true" class="bg-greenyellow" id="src_move" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+    Select this element and drag to the <strong>Move Drop Zone</strong>.
+</div>
+
+<div id="dest_move" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Move Drop Zone</strong>
+</div>
+</body>
+</html>
