@@ -1,51 +1,103 @@
+// ev ─ активный элемент
 function dragstart_handler(ev) {
-    console.log("dragStart");
-    // Change the source element's background color to signify drag has started
-    ev.currentTarget.style.border = "dashed";
-    // Add the id of the drag source element to the drag data payload so
-    // it is available when the drop event is fired
+    console.groupCollapsed('dragStart');
+        console.log('ev.target', ev.target);
+    addClass(ev.currentTarget, 'start');
     ev.dataTransfer.setData("text", ev.target.id);
     // Tell the browser both copy and move are possible
     ev.effectAllowed = "copyMove";
+    console.groupEnd();
 }
+
+function dragenter_handler(ev){
+    console.groupCollapsed('Enter');
+    console.log('ev.target', ev.target);
+    console.groupEnd();
+}
+// ev ─ пассивный элемент, может быть другим ранее активным элементом!
 function dragover_handler(ev) {
-    console.log("dragOver");
-    // Change the target element's border to signify a drag over event
-    // has occurred
-    ev.currentTarget.style.background = "lightblue";
     ev.preventDefault();
+    addClass(ev.currentTarget, 'over');
 }
+// ev.currentTarget ─ пассивный элемент
+function dragleave_handler(ev) {
+    console.groupCollapsed('Leave');
+    console.log('ev.target', ev.target);
+    removeClass(ev.target, 'over');
+    console.groupEnd();
+}
+// droppingElement ─ активный элемент, извлекается из DOM по id
+// ev.currentTarget ─ пассивный элемент
 function drop_handler(ev) {
-    console.log("Drop");
+    console.groupCollapsed('Drop');
     ev.preventDefault();
-    // Get the id of drag source element (that was added to the drag data
-    // payload by the dragstart event handler)
-    var id = ev.dataTransfer.getData("text");
-
-    moveElement();
-
-    copyElement();
+    var transferredElementId = ev.dataTransfer.getData("text"),
+        droppingElement = document.getElementById(transferredElementId);
+    console.log({ 'ev.target':ev.target, droppingElement:droppingElement });
+    dragFinish.call(droppingElement, ev);
+    console.groupEnd();
 }
-
-function moveElement(){
-    // Only Move the element if the source and destination ids are both "move"
-    if (id == "src_move" && ev.target.id == "dest_move")
-        ev.target.appendChild(document.getElementById(id));
-}
-
-function copyElement(){
-    // Copy the element if the source and destination ids are both "copy"
-    if (id == "src_copy" && ev.target.id == "dest_copy") {
-        var nodeCopy = document.getElementById(id).cloneNode(true);
-        nodeCopy.id = "newId";
-        ev.target.appendChild(nodeCopy);
+// this, droppingElement ─ активный элемент
+// ev ─ пассивный элемент
+function dragFinish(ev) {
+    console.groupCollapsed('dragFinish');
+        console.log('ev.target', ev.target);
+    try {
+        var transferType = this.dataset.transferType, // copy, move
+            node = this;
+        if (ev.target.id == 'dest_' + transferType) {
+            if (transferType == 'copy') {
+                node = node.cloneNode(true);
+                node.id = node.id + "_copy";
+            }
+            removeClass(node, 'start');
+            removeClass(ev.target, 'over');
+            ev.target.appendChild(node);
+        }
+    } catch (e) {
+        console.error(e.message);
     }
+    console.groupEnd();
 }
-
+// активный элемент
 function dragend_handler(ev) {
-    console.log("dragEnd");
-    // Restore source's border
-    ev.target.style.border = "solid black";
+    console.groupCollapsed('dragEnd');
+    console.log('ev.target', ev.target);
     // Remove all of the drag data
     ev.dataTransfer.clearData();
+    /** • Тут нюанс. Отловить непосредственно элемент ev.target.parentNode
+        не всегда возможно */
+    removeClass(ev.target, 'over');
+    removeClass(ev.target, 'start');
+    /** проверить блоки с неудалённым классом 'drag-over'.
+        ситуация возможна, когда после события over не возникает
+        события leave для данного объекта, что происходит, если
+        перемещаемый элемент не может быть на него сброшен. */
+    var overRemains=document.getElementsByClassName('drag-over');
+    if(overRemains.length){
+        for(var i= 0, j=overRemains.length; i<j; i++){
+            removeClass(overRemains[i], 'over');
+        }
+    }
+    console.groupEnd();
+    console.log('- - - - - - - - - - - -');
+}
+
+function removeClass(element, name){
+    if(element.classList) {
+        if(element.classList.contains('drag-'+name)) {
+            console.log('removeClass', {element: element, name: name});
+            element.classList.remove('drag-' + name);
+            console.trace();
+        }
+    }
+}
+function addClass(element, name){
+    if(element.classList) {
+        if(!element.classList.contains('drag-'+name)){
+            console.log('addClass', { element:element, name:name });
+            element.classList.add('drag-'+name);
+            console.trace();
+        }
+    }
 }

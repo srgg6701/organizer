@@ -16,24 +16,24 @@
 <a href="http://mdn.github.io/drag-and-drop/copy-move-DataTransfer.html">http://mdn.github.io/drag-and-drop/copy-move-DataTransfer.html</a>
 <h1>Drag and Drop: Copy and Move elements with <code>DataTransfer</code></h1>
 
-<div draggable="true" class="bg-yellow" id="src_copy1" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+<div draggable="true" class="bg-yellow" data-transfer-type="copy" id="src_copy1" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
     Select this element and drag to the <strong>Copy Drop Zone 1</strong>.
 </div>
 
 
-<div draggable="true" class="bg-orange" id="src_copy2" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+<div draggable="true" class="bg-orange" data-transfer-type="copy" id="src_copy2" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
     Select this element and drag to the <strong>Copy Drop Zone 2</strong>.
 </div>
 
 
-<div id="dest_copy" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Copy Drop Zone</strong>
+<div id="dest_copy" ondragenter="dragenter_handler(event)" ondragleave="dragleave_handler(event)" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Zone to copy and drop</strong>
 </div>
 
-<div draggable="true" class="bg-greenyellow" id="src_move" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+<div draggable="true" class="bg-greenyellow" data-transfer-type="move" id="src_move" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
     Select this element and drag to the <strong>Move Drop Zone</strong>.
 </div>
 
-<div id="dest_move" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Move Drop Zone</strong>
+<div id="dest_move" ondragenter="dragenter_handler(event)" ondragleave="dragleave_handler(event)" ondrop="drop_handler(event);" ondragover="dragover_handler(event);"><strong>Zone to copy and drop</strong>
 </div>
 </body>
 </html>
