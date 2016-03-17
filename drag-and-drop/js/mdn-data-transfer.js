@@ -21,9 +21,19 @@ function drop_handler(ev) {
     // Get the id of drag source element (that was added to the drag data
     // payload by the dragstart event handler)
     var id = ev.dataTransfer.getData("text");
+
+    moveElement();
+
+    copyElement();
+}
+
+function moveElement(){
     // Only Move the element if the source and destination ids are both "move"
     if (id == "src_move" && ev.target.id == "dest_move")
         ev.target.appendChild(document.getElementById(id));
+}
+
+function copyElement(){
     // Copy the element if the source and destination ids are both "copy"
     if (id == "src_copy" && ev.target.id == "dest_copy") {
         var nodeCopy = document.getElementById(id).cloneNode(true);
@@ -31,6 +41,7 @@ function drop_handler(ev) {
         ev.target.appendChild(nodeCopy);
     }
 }
+
 function dragend_handler(ev) {
     console.log("dragEnd");
     // Restore source's border
