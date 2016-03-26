@@ -1,0 +1,13 @@
+body{
+    font: 16px/1.5 Cambria, Georgia, serif;
+}
+body > div {
+    box-shadow: 0 0 20px rgba(100, 100, 255, 0.3) inset;
+    margin-bottom: 4px;
+}
+div {
+    padding: 10px;
+}
+.inline-block{
+    display: inline-block;
+}

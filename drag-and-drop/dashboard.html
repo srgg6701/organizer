@@ -4,103 +4,13 @@
     <meta charset="UTF-8">
     <title>Drag-n-Drop</title>
     <link rel="stylesheet" href="css/draggable-columns.css">
-    <style>
-        .container {
-            margin: 10px 10px 10px 0;
-            min-height: 80px;
-            min-width: 320px;
-            padding: 10px;
-        }
-
-        .float-left {
-            float: left;
-        }
-
-        [class*="bg"] {
-            margin-bottom: 10px;
-            margin-right: 10px;
-            padding: 10px;
-        }
-
-        .bg-pink {
-            background-color: pink;
-        }
-
-        .bg-lightskyblue {
-            background-color: lightskyblue;
-        }
-
-        .bg-linen {
-            background-color: linen;
-        }
-
-        .command {
-            color: blue;
-            cursor: pointer;
-            display: table;
-            margin: 10px 0 20px;
-        }
-
-        .section-box {
-            margin: 10px 10px auto;
-            padding: 20px;
-            background-color: orange;
-        }
-
-        .section-box h4 {
-            background-color: #fff;
-            display: table;
-            margin: 0;
-        }
-
-        .test {
-            background-color: yellow;
-            cursor: move;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        #test-area {
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        #test-area.collapsed {
-            display: none;
-        }
-
-        hr {
-            clear: both;
-        }
-    </style>
-    <script>
-        function switchSize() {
-            console.log('switchSize');
-            document.getElementById('test-area').classList.toggle('collapsed');
-        }
-        window.onload = function () {
-            var eventsMap = {
-                dragstart: Dragstart,
-                dragover: Dragover,
-                dragenter: Dragenter,
-                dragleave: Dragleave,
-                drop: Drop,
-                dragend: Dragend
-            };
-            [].forEach.call(document.querySelectorAll('.test-move, .test-dropzone, .section-box'),
-                    function (element) {
-                        for (var event in eventsMap) {
-                            element.addEventListener(event, eventsMap[event], false);
-                        }
-                    });
-        };
-    </script>
+    <link rel="stylesheet" href="css/xtra.css">
 </head>
 <body>
 <div class="issues" ondblclick="this.innerHTML=''"></div>
 <main>
     <h3>Drag me up, baby. And lo♥e me there ☺</h3>
-    <h4 class="command" id="switcher" onclick="switchSize()">Switch test area</h4>
+
     <div id="test-area" class="collapsed">
         <section class="test section-box">
             <div class="float-left bg-pink test-move" id="some-id-1" draggable="true">Drag me pink!</div>
@@ -119,18 +29,24 @@
         </section>
     </div>
 
+    <hr>
+
+    <div id="section-cards"></div>
+
+    <div id="section-categories"></div>
+
+
+    <hr>
+
     <div id="box-columns" class="cards-container">
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
+
             <header data-drop-target="column">In progress</header>
             <div data-task-status="processed">
-                <div id="task0" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Тут
-                    некая
-                    задача из тех, что назначены, но ещё не начаты
+                <div id="task0" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Тут некая задача из тех, что назначены, но ещё не начаты
                     <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
-                <div id="task2" data-task-status="processed" data-drop-target="card" draggable="true" class="card">А это
-                    уже
-                    задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
+                <div id="task2" data-task-status="processed" data-drop-target="card" draggable="true" class="card">А это уже задача, находящаяся в работе. Со всякими там описаниями, картинками и т.п.
                     <div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>
                 </div>
                 <div id="task3" data-task-status="processed" data-drop-target="card" draggable="true" class="card">Эти
@@ -143,7 +59,9 @@
                 </div>
             </div>
         </div>
+
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
+
             <header data-drop-target="column">Not started</header>
             <div data-task-status="new">
                 <div id="task1" data-task-status="new" data-drop-target="card" draggable="true" class="card">
@@ -152,7 +70,9 @@
                 </div>
             </div>
         </div>
+
         <div draggable="true" data-drop-area="column" data-drop-target="card" class="column">
+
             <header data-drop-target="column">Done</header>
             <div data-task-status="done">
                 <div id="task5" data-task-status="done" data-drop-target="card" draggable="true" class="card">
@@ -162,22 +82,25 @@
             </div>
         </div>
     </div>
-    <!---->
+
     <div id="panel-container-1" draggable="true" class="box-panel-container" data-drop-area="category-container">
-        <header>Catgory 1</header>
+
+        <header>Category: User experience</header>
         <section id="box-rows-1" data-drop-area="panel" data-drop-target="card-panel"
                  class="cards-container bg-darkmarine box-panel">
         </section>
     </div>
+
     <div id="panel-container-2" draggable="true" class="box-panel-container" data-drop-area="category-container">
-        <header>Catgory 2</header>
+
+        <header>Category: Workflow improvements</header>
         <section id="box-rows-2" data-drop-area="panel" data-drop-target="card-panel"
                  class="cards-container bg-darkmarine box-panel">
         </section>
     </div>
 </main>
+<script src="js/dataManager.js"></script>
 <script src="js/dashboard.js"></script>
-<!--<script src="js/mdn-source.js"></script>-->
-<!--<script src="js/test.js"></script>-->
+<!--<script src="js/dashboard-old.js"></script>-->
 </body>
 </html>

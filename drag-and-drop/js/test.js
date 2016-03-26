@@ -1,3 +1,23 @@
+function switchSize() {
+    console.log('switchSize');
+    document.getElementById('test-area').classList.toggle('collapsed');
+}
+window.onload = function () {
+    var eventsMap = {
+        dragstart:  Dragstart,
+        dragover:   Dragover,
+        dragenter:  Dragenter,
+        dragleave:  Dragleave,
+        drop:       Drop,
+        dragend:    Dragend
+    };
+    [].forEach.call(document.querySelectorAll('.test-move, .test-dropzone, .section-box'),
+        function (element) {
+            for (var event in eventsMap) {
+                element.addEventListener(event, eventsMap[event], false);
+            }
+        });
+};
 function Dragstart(ev) {
     //console.log("dragStart: dropEffect = " + ev.dataTransfer.dropEffect + " ; effectAllowed = " + ev.dataTransfer.effectAllowed);
     console.log('%cDragstart: ', 'background-color:rgb(200,0,0); padding:4px 6px', { this:this, ev:ev });

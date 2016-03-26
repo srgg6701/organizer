@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>event, this, listener</title>
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/event-this-listener.css">
+    <script src="js/_common.js"></script>
+    <script src="js/event-this-listener.js"></script>
+</head>
+<body>
+<h3>Explore event, this and how it apply to listeners</h3>
+<p>See <code>results</code> in console</p>
+<div class="inline-block">
+    <div>
+        <a href="javascript:void(0)" id="link">Click me, Dude!</a>
+        <p>Using <code>addEventListener</code>, the anonymous function is passed as an argument.</p>
+        <p><b>Not captured.</b></p>
+        <p>this: <code>a#link</code>, event: <code>MouseEvent</code></p>
+    </div>
+    <div>
+        <a href="javascript:void(0)" id="link-captured">Click me, Dude!</a>
+        <p>Using <code>addEventListener</code>, callback.</p>
+        <p><b>Captured.</b></p>
+        <p>this: <code>a#link</code>, event: <code>MouseEvent</code></p>
+    </div>
+    <div>
+        <a href="javascript:void(0)" id="link-onclick">Click me on!</a>
+        <p>Using <code>onclick</code> as a listener, call anonymous function.</p>
+        <p>this: <code>element outerHTML</code>, event: <code>MouseEvent</code></p>
+    </div>
+    <div>
+        <a href="javascript:void(0)" onclick="goInside(this, event)">Go inside!</a>
+        <p>Direct calling on the element (this, event).</p>
+        <p>_this: <code>a</code>, this: <code>Window</code>, event: <code>MouseEvent</code></p>
+    </div>
+    <!--<div>
+        <a href="javascript:void(0)" onclick="getBinded(this)">Click and Bind!</a>
+        <p>Bind <code>this</code> to other object</p>
+    </div>-->
+</div>
+<h4>Links</h4>
+<a href="http://stackoverflow.com/questions/7398290/unable-to-understand-usecapture-attribute-in-addeventlistener">http://stackoverflow.com/questions/7398290/unable-to-understand-usecapture-attribute-in-addeventlistener</a>
+</body>
+</html>
