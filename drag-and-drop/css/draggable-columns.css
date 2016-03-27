@@ -1,7 +1,6 @@
 *{
     box-sizing: border-box;
     font-family: Tahoma, serif;
-    /* padding-top: 10px; */
 }
 body{
     display: flex;
@@ -12,6 +11,7 @@ h1, h2, h3, h4, h5, header{
 }
 header{
     color: whitesmoke;
+    clear: both;
     font-weight: bold;
     background-color: #444;
     /* margin-bottom: 10px; */
@@ -31,6 +31,9 @@ main > h4,
 main > h5{
     padding: 0 5px;
 }
+#section-cards, #section-categories{
+    overflow:auto;
+}
 [data-drop-area="category-container"]{
     margin-top: 10px;
 }
@@ -48,44 +51,57 @@ main > h5{
     background-color:#514378;
 } 
 .box-panel{
-    margin: 0 !important;
-    padding: 10px 5px;
+    /* margin-right: 0 !important; */
+    overflow: auto;
+    padding: 10px 10px 0 0;
 }
 .box-panel .card{
+    margin-right: 0 !important;
     padding-right: 28px;
     width: 273px;
 }
-.remove{
-    display: none;
+.box-panel-container{
+    overflow:auto;
+    margin: 10px;
 }
-.box-panel .remove{
-    background-color: black;
-    border-radius: 50%;
+.remove{
+    background-color: rgba(50,0,0,0.5);
+    border-radius: 34%;
     display: inherit;
-    height: 20px;
+    height: 22px;
+    margin: 3px 3px 0 0;
     position: absolute;
     right: 0;
     top: 0;
-    transform: rotate(45deg);
-    width: 20px;
+    width: 22px;
 }
-.box-panel .remove::after{
+.remove::after{
     content: "+";
     color: white;
     cursor: default;
     display: inline-block;
     font-weight: bold;
     height: 20px;
-    line-height: 0;
+    line-height: 1;
+    margin-left: -1px;
+    margin-top: 0px;
     opacity: 0.85;
     text-align: center;
-    width: 20px;
+    transform: rotate(45deg);
+    width: 21px;
 }
 .card{
-    box-shadow: 0 0 6px rgba(0,0,0,0.25);
-    margin-bottom: 10px;
-    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    /* box-shadow: 0 0 120px 4px rgba(200,200,0,0.25) inset; */
+    margin-bottom: 6px;
+    padding: 10px 24px 10px 10px;
     /* outline: solid 2px #ccc; */
+}
+header +div{
+    padding: 10px 10px 5px;
+}
+header +div > .card:not(:first-child){
+    margin-top: 10px;    
 }
 .cards-box{
     min-height: 68px;
@@ -111,11 +127,14 @@ main > h5{
 .column,
 .box-panel .card{
     float: left;
-    margin: auto 8px 10px;
+    margin: auto 10px 10px;
 }
 .column{
     width: 280px;
-    box-shadow: 0 0 0px 4px rgba(0,0,0,0.35);
+}
+.column,
+.box-panel-container{
+    box-shadow: 0 0 10px 3px rgba(0,0,0,0.15);
 }
 .column>[data-task-status]{
     min-height: 88px;
@@ -152,7 +171,6 @@ main > h5{
 
 /*      */
 [data-group-status]{
-    background-color: #eee;
-    /* box-shadow: 0 0 10px rgba(0,0,0,0.5) inset; */
+    /* background-color: #eee; */
     padding:10px;
 }

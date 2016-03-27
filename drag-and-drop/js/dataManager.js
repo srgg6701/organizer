@@ -24,49 +24,125 @@ function getData(){
 
 function manageData(){
     getData()
-        .then(function(response){
+        .then(function(response) {
             var contents = JSON.parse(response),
-                key, value, group, card,
+                taskId, value, group, card, cardNodes, cards={},
                 sectionCards = document.getElementById('section-cards'),
-                sectionCatrgories = document.getElementById('section-categories');
-            console.log('response', { tasks: contents.tasks, categories: contents.categories });
-        for(var cat in contents.tasks){
-            console.group('Category:', cat+' ['+contents.tasks[cat][0]+']');
-            card='';
-            //sectionCards.get
-            contents.tasks[cat][1].forEach(function(category){
-                key = Object.keys(category)[0];
-                value = category[key];
-                console.log(key, value);
-                card+=compileCard(key, contents.tasks[cat][0], value);
-            });
+                sectionCategories = document.getElementById('section-categories');
+            console.groupCollapsed('getData');
+            // создать группу карточек
+            var cardContainer, cardClose, groupContainer, groupCardsContainer;
+            for (var cat in contents.tasks) {
+                card = '';
+                group = compileGroup(cat, contents.tasks[cat][0].alias, contents.tasks[cat][0].bg);
+                groupContainer = group[0];
+                groupCardsContainer = group[1];
+                //
+                contents.tasks[cat][1].forEach(function (category) {
+                    taskId = Object.keys(category)[0];
+                    value = category[taskId];
+                    cardNodes = compileCard(taskId, contents.tasks[cat][0].alias, value);
+                    cardContainer = cardNodes[0];
+                    cardClose = cardNodes[1];
+                    cards[taskId]=[cardContainer.cloneNode(), document.createTextNode(value), cardClose.cloneNode()];
+                    cardContainer.appendChild(cardClose);
+                    groupCardsContainer.appendChild(cardContainer);
+                });
+                groupContainer.appendChild(groupCardsContainer);
+                sectionCards.appendChild(groupContainer);
 
-            group = compileGroup(cat, contents.tasks[cat][0], card);
-            sectionCards.innerHTML+=group;
+            }
+            // добавить панели категорий
+            var panel, container, section, pos, nativeId;
+            for(var cat in contents.categories){
+                //console.log({cat:cat, contents:contents.categories[cat]});
+                card='';
+                panel = compileCategory(contents.categories[cat][0].alias, cat, contents.categories[cat][0].bg);
+                //console.log('%ccategories', 'color:green', { cats: contents.categories[cat][1], cards:cards });
+                container = panel[0];
+                section = panel[1];
+                contents.categories[cat][1].forEach(function (objTaskId){
+                    card=cards[objTaskId];
+                    pos=card[0].id.indexOf('_');
+                    nativeId=(pos!=-1)?
+                        card[0].id.substr(0,pos):card[0].id;
+                    card[0].id=nativeId+'_'+contents.categories[cat][0].alias;
+                    //console.log('card[0].id', card[0].id);
+                    card[0].appendChild(card[1]);
+                    card[0].appendChild(card[2]);
+                    section.appendChild(card[0]);
+                });
+                container.appendChild(section);
+                sectionCategories.appendChild(container);
+            }
 
             console.groupEnd();
-        }
-    }, function(error){
+
+            var elements=document.querySelectorAll('[draggable="true"]');
+            [].forEach.call(elements,function(item){ //console.log(item);
+                item.addEventListener('dragstart', dragStart);
+                item.addEventListener('dragend', dragEnd);
+            });
+
+            elements=document.querySelectorAll('[data-element]');
+            [].forEach.call(elements,function(item){ //console.log(item);
+                item.addEventListener('dragover', dragOver);
+                item.addEventListener('dragenter', dragEnter);
+                item.addEventListener('dragleave', dragLeave);
+                item.addEventListener('drop', drop);
+            });
+
+            //window.dragStore = dragStoreInit();
+            //console.log('dragStore', window.dragStore);
+
+        }, function(error){
             console.warn(error)
     });
 }
 
-function compileGroup(header, status, contents){
+function compileGroup(header, status, bg){
     console.groupCollapsed('compileGroup', header, status);
-    var html = '<div draggable="true" class="column">' +
-        '<header>'+header+'</header>' +
-    '<div data-group-status="'+status+'">'+contents+'</div>';
-        console.log(html);
+    var groupContainer=document.createElement('div'),
+        groupHeader=document.createElement('header'),
+        groupCardsContainer=document.createElement('div');
+    groupContainer.draggable="true";
+    groupContainer['data-element']="group";
+    groupContainer.className="column";
+    groupHeader.appendChild(document.createTextNode(header));
+    groupContainer.appendChild(groupHeader);
+    groupCardsContainer['data-element']="group-card-container";
+    groupCardsContainer['data-group-status']=status;
+    groupCardsContainer.style='background-color: '+bg;
     console.groupEnd();
-    return html;
+    return [groupContainer, groupCardsContainer];
 }
 function compileCard(id, status, contents){
-    return '<div id="task'+id+'" data-task-status="'+status+'" draggable="true" class="card">'+contents+'<div class="remove" data-action="remove-card-copy" onclick="removeIssueCopyFromPanel(this)"></div>' +
-    '</div>';
+    var divContainer = document.createElement('div'),
+        divClose = document.createElement('div');
+    divContainer.id="task"+id;
+    divContainer['data-task-status']=status;
+    divContainer['data-element']="card";
+    divContainer.draggable="true";
+    divContainer.className="card";
+    divContainer.appendChild(document.createTextNode(contents));
+    divClose.className="remove";
+    divClose['data-action']="remove-card-copy";
+    divClose.addEventListener('click', removeIssueCopyFromPanel);
+    return [divContainer, divClose];
 }
-function compileCategory(id, category){
-    return '<div id="panel-container-'+id+'" draggable="true" class="box-panel-container" data-drop-area="category-container">' +
-        '<header>Category: '+category+'</header>' +
-        '<section id="box-rows-'+id+'" data-drop-area="panel" data-drop-target="card-panel" class="cards-container bg-darkmarine box-panel"></section>' +
-    '</div>';
+function compileCategory(name, category, bg){
+    var container   = document.createElement('div'),
+        header      = document.createElement('header'),
+        section     = document.createElement('section');
+    container.id="panel-container-"+name;
+    container.draggable="true";
+    container['data-element']="category";
+    container.className="box-panel-container";
+    header.appendChild(document.createTextNode('Category'+category));
+    container.appendChild(header);
+    section.id="box-rows-"+name;
+    section['data-element']="panel-card-container";
+    section.className="box-panel";
+    section.style='background-color:'+bg;
+    return [container, section];
 }
