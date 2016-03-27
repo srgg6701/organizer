@@ -34,7 +34,7 @@ function manageData(){
             var cardContainer, cardClose, groupContainer, groupCardsContainer;
             for (var cat in contents.tasks) {
                 card = '';
-                group = compileGroup(cat, contents.tasks[cat][0].alias, contents.tasks[cat][0].bg);
+                group = compileGroup(cat, contents.tasks[cat][0].alias);
                 groupContainer = group[0];
                 groupCardsContainer = group[1];
                 //
@@ -49,6 +49,8 @@ function manageData(){
                     groupCardsContainer.appendChild(cardContainer);
                 });
                 groupContainer.appendChild(groupCardsContainer);
+                groupContainer.id="group-"+contents.tasks[cat][0].alias;
+                groupContainer.style='background-color:'+contents.tasks[cat][0].bg;
                 sectionCards.appendChild(groupContainer);
 
             }
@@ -81,6 +83,7 @@ function manageData(){
             var elements=document.querySelectorAll('[draggable="true"]');
             [].forEach.call(elements,function(item){ //console.log(item);
                 item.addEventListener('dragstart', dragStart);
+                item.addEventListener('drag', drag);
                 item.addEventListener('dragend', dragEnd);
             });
 
@@ -100,7 +103,7 @@ function manageData(){
     });
 }
 
-function compileGroup(header, status, bg){
+function compileGroup(header, status){
     console.groupCollapsed('compileGroup', header, status);
     var groupContainer=document.createElement('div'),
         groupHeader=document.createElement('header'),
@@ -112,7 +115,6 @@ function compileGroup(header, status, bg){
     groupContainer.appendChild(groupHeader);
     groupCardsContainer.dataset['element']="group-card-container";
     groupCardsContainer['data-group-status']=status;
-    groupCardsContainer.style='background-color: '+bg;
     console.groupEnd();
     return [groupContainer, groupCardsContainer];
 }

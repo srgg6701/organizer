@@ -120,7 +120,7 @@ header +div > .card:not(:first-child){
     color: black;
 }
 .cards-container, .row, .column{
-    min-height: 127px;
+    min-height: 67px;
 }
 .cards-container{
     overflow:auto;

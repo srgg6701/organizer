@@ -1,17 +1,47 @@
 window.onload = function(){
     console.log('dashboard works');
+    document.onmouseup=function(event){
+        console.log('coordinates', {
+            clientX:event.clientX,
+            clientY:event.clientY
+        });
+    };
     manageData();
 };
 
 function dragStart(event){
     console.groupCollapsed('dragStart');
-        console.log('event.target', { currentTarget:event.currentTarget, event: event });
+        var elementCoords = event.target.getBoundingClientRect(),
+            diffX = event.clientX-elementCoords.left,
+            diffY = event.clientY-elementCoords.top;
+        console.log('event.target', {
+            currentTarget:event.currentTarget,
+            event: event,
+            coordinates: {
+                element:elementCoords,
+                mouse:{
+                    x: event.clientX,
+                    y: event.clientY
+                },
+                diff:{
+                    x:diffX,
+                    y:diffY
+                }
+            }
+        });
+
     //Hello there, <strong>stranger</strong>
     modifyClassList(event.currentTarget, 2, true);
-    event.dataTransfer.setData("text/html", event.target.outerHTML);
-    event.dataTransfer.setData("text", event.target.dataset.element);
+    //event.dataTransfer.setData("text/html", event.target.outerHTML);
+    event.dataTransfer.setData("text", event.target.id+':'+event.target.dataset.element+':'+diffX+':'+diffY);
     event.effectAllowed = "copyMove";
     console.groupEnd();
+}
+
+function drag(event){
+    /*event.preventDefault();
+    if(this.dataset.element&&this.dataset.element=='card')
+        console.log('drag', { event:event, this:this});*/
 }
 
 function dragOver(event){
@@ -36,15 +66,107 @@ function drop(event) {
     event.preventDefault();
 
     console.group('drop');
-        console.log(event.target);
-    var transferredElementHTML = event.dataTransfer.getData("text/html"),
-        transferredElementType = event.dataTransfer.getData("text");
-        console.log('transferredElement', { type: transferredElementType, HTML: transferredElementHTML, thisElementType: this.dataset.element });
-        /*,
-        droppingElement = document.getElementById(transferredElementHTML);*/
+
+    var transferData=event.dataTransfer.getData("text").split(':'),
+        // извлечь сохранённый перемещаемый элемент
+        draggedElement = document.getElementById(transferData[0]),
+        // рассчитать координаты "перемещаемого" объекта
+        transferLeft=event.clientX-transferData[2],
+        transferTop=event.clientY-transferData[3],
+        // координаты "принимающего" объекта
+        thisCoordinates = this.getBoundingClientRect(),
+        thisLeft=thisCoordinates.left,
+        thisTop=thisCoordinates.top,
+        directionX = (transferLeft>thisLeft)? 'right':'left',
+        directionY = (transferTop>thisTop)? 'bottom':'top';
+        console.log('draggedElement:', draggedElement, '\nreceiver:', this, '\ndirection: ' + directionX+':'+directionY); /*console.log({
+                '0 transferElementType': transferData[1],
+                '1 transferLeft': thisLeft,
+                '2 transferTop': transferTop,
+                '3 receiverLeft':thisLeft,
+                '4 receiverTop':thisTop
+        });*/
     try {
-        var //transferType = droppingElement.dataset.transferType, // copy, move
-            clone;
+        var clone,
+            applyCardRelocation = function(receiverCard){
+                if(directionY=='bottom'){
+                    // у текущего элемента есть сосед (следующий)
+                    if(receiverCard.nextSibling){
+                        // вставить между текущим и соседним
+                        console.log('Вставить между текущим и соседним');
+                        receiverCardParentGroup.insertBefore(draggedElement, receiverCard.nextSibling);
+                    }else{ // соседа нет, т.е., текущий -- последний в контейнере
+                        // добавить в контейнер
+                        console.log('Добавить в контейнер');
+                        receiverCardParentGroup.appendChild(draggedElement);
+                    }
+                }else{ // со сдвигом вверх
+                    console.log('Вставить перед текущим');
+                    receiverCardParentGroup.insertBefore(draggedElement, receiverCard);
+                }
+            };
+
+        switch (draggedElement.dataset.element) {
+            // перемещаем группу
+            case 'group':
+
+                break;
+            // перемещаем категорию
+            case 'category':
+
+                break;
+            // перемещаем карточку
+            case 'card':
+                switch (this.dataset.element) {
+                    // на карточку
+                    case 'card': // выяснить, что является контейнером
+                        var receiverCardParentGroup = this.parentNode;
+                        console.group('%cРасположить перед/после карточки', 'color:blue');
+                        if(receiverCardParentGroup.dataset.element=='panel-card-container'){ // панель категорий
+                            console.log('%cСкопировать на панель категорий', 'color:violet');
+                        }else // группа
+                            if(receiverCardParentGroup.dataset.element=='group-card-container'){
+                                // та же самая группа
+                                if(receiverCardParentGroup.id==draggedElement.parentNode.id){
+                                    if(receiverCardParentGroup.querySelectorAll('[data-element="card"]').length==1){
+                                        console.log('%cГруппа содержит только перемещаемую карточку', 'background-color: #ddd');
+                                        return false;
+                                    }
+                                    console.log('%cИзменить позицию в группе', 'color:rebeccapurple');
+                                    // со сдвигом вниз
+                                    if(directionY=='bottom'){
+                                        // у текущего элемента есть сосед (следующий)
+                                        applyCardRelocation(this);
+                                    }else{ // со сдвигом вверх
+                                        console.log('Вставить перед текущим');
+                                        receiverCardParentGroup.insertBefore(draggedElement, this);
+                                    }
+                                }else{ // другая группа
+                                    console.log('%cПереместить в другую группу', 'color:orange');
+                                    // со сдвигом вниз
+                                    applyCardRelocation(this);
+                                }
+                        }
+                        console.groupEnd();
+                        break;
+                    case 'group-card-container':
+                        if(!this.contains(draggedElement)){
+                            console.log('%cДобавить в группу', 'color:green');
+                            this.appendChild(draggedElement);
+                        }else{
+                            console.log('Элемент уже содержится в этой группе');
+                            return false;
+                        }
+                        break;
+                }
+
+                break; //group-card-container
+
+            default:
+                console.log('%cНичего не делать', 'background-color: #ddd');
+                return false;
+        }
+
         //console.log('target', event.target);
         /*if (event.target.id == 'dest_' + transferType) {
             if (transferType == 'copy') {
@@ -62,7 +184,8 @@ function drop(event) {
 }
 
 function dragEnd(event){
-    console.log('dragEnd', event.target);
+    console.group('dragEnd');
+        console.log('event.target', event.target);
     // Remove all of the drag data
     event.dataTransfer.clearData();
     /** • Тут нюанс. Отловить непосредственно элемент event.target.parentNode
@@ -85,6 +208,7 @@ function dragEnd(event){
             modifyClassList(overRemains[i], 1);
         }
     }
+    console.groupEnd();
 }
 
 
