@@ -4,41 +4,61 @@ window.onload = function(){
 };
 
 function dragStart(event){
-    console.log('dragStart', event.target);
+    console.groupCollapsed('dragStart');
+        console.log('event.target', { currentTarget:event.currentTarget, event: event });
+    //Hello there, <strong>stranger</strong>
+    modifyClassList(event.currentTarget, 2, true);
+    event.dataTransfer.setData("text/html", event.target.outerHTML);
+    event.dataTransfer.setData("text", event.target.dataset.element);
+    event.effectAllowed = "copyMove";
+    console.groupEnd();
 }
 
 function dragOver(event){
     //console.log('dragOver', event.target);
+    event.preventDefault();
+    if(event.target.dataset['element']!="group-card-container")
+        modifyClassList(event.currentTarget, 1, true);
 }
 
 function dragEnter(event){
     //console.log('dragEnter', event.target);
+    //event.preventDefault();
+    //modifyClassList(event.currentTarget, 1, true);
 }
 
 function dragLeave(event){
     //console.log('dragLeave', event.target);
+    modifyClassList(event.currentTarget, 1);
 }
 
 function drop(event) {
-    console.log('drop', event.target);
     event.preventDefault();
-    var transferredElementId = event.dataTransfer.getData("text"),
-        droppingElement = document.getElementById(transferredElementId);
+
+    console.group('drop');
+        console.log(event.target);
+    var transferredElementHTML = event.dataTransfer.getData("text/html"),
+        transferredElementType = event.dataTransfer.getData("text");
+        console.log('transferredElement', { type: transferredElementType, HTML: transferredElementHTML, thisElementType: this.dataset.element });
+        /*,
+        droppingElement = document.getElementById(transferredElementHTML);*/
     try {
-        var transferType = this.dataset.transferType, // copy, move
-            node = this;
-        if (event.target.id == 'dest_' + transferType) {
+        var //transferType = droppingElement.dataset.transferType, // copy, move
+            clone;
+        //console.log('target', event.target);
+        /*if (event.target.id == 'dest_' + transferType) {
             if (transferType == 'copy') {
-                node = node.cloneNode(true);
-                node.id = node.id + "_copy";
+                clone = droppingElement.cloneNode(true);
+                clone.id = clone.id + "_copy";
             }
             modifyClassList(event.currentTarget, 1);
-            modifyClassList(node, 2);
-            event.target.appendChild(node);
-        }
+            modifyClassList(clone, 2);
+            event.target.appendChild(clone);
+        }*/
     } catch (e) {
         console.error(e.message);
-    }
+        //console.log('droppingElement', value);
+    }   console.groupEnd();
 }
 
 function dragEnd(event){
@@ -55,10 +75,17 @@ function dragEnd(event){
      перемещаемый элемент не может быть на него сброшен. */
     var overRemains=document.getElementsByClassName('drag-over');
     if(overRemains.length){
-        for(var i= 0, j=overRemains.length; i<j; i++){
+        //console.log('overRemains', { length:overRemains.length });
+        //console.dir(overRemains);
+        for(var i= 0; i<overRemains.length; i++){
+            /**
+                не заменять i<overRemains.length на статическую переменную,
+                т.к. состав коллекции обновляется динамически! */
+            //console.log('item', overRemains.item(i));
             modifyClassList(overRemains[i], 1);
         }
-    }}
+    }
+}
 
 
 function showArgs(event){
@@ -71,6 +98,9 @@ function showArgs(event){
 
 //
 function modifyClassList(element, classNumber, add){
+    if(!element){
+        console.trace('no element');
+    }
     if(element.classList) {
         var func, className='drag-';
         switch (classNumber){

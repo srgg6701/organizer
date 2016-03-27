@@ -106,11 +106,11 @@ function compileGroup(header, status, bg){
         groupHeader=document.createElement('header'),
         groupCardsContainer=document.createElement('div');
     groupContainer.draggable="true";
-    groupContainer['data-element']="group";
+    groupContainer.dataset['element']="group";
     groupContainer.className="column";
     groupHeader.appendChild(document.createTextNode(header));
     groupContainer.appendChild(groupHeader);
-    groupCardsContainer['data-element']="group-card-container";
+    groupCardsContainer.dataset['element']="group-card-container";
     groupCardsContainer['data-group-status']=status;
     groupCardsContainer.style='background-color: '+bg;
     console.groupEnd();
@@ -121,7 +121,7 @@ function compileCard(id, status, contents){
         divClose = document.createElement('div');
     divContainer.id="task"+id;
     divContainer['data-task-status']=status;
-    divContainer['data-element']="card";
+    divContainer.dataset['element']="card";
     divContainer.draggable="true";
     divContainer.className="card";
     divContainer.appendChild(document.createTextNode(contents));
@@ -136,12 +136,12 @@ function compileCategory(name, category, bg){
         section     = document.createElement('section');
     container.id="panel-container-"+name;
     container.draggable="true";
-    container['data-element']="category";
+    container.dataset['element']="category";
     container.className="box-panel-container";
     header.appendChild(document.createTextNode('Category'+category));
     container.appendChild(header);
     section.id="box-rows-"+name;
-    section['data-element']="panel-card-container";
+    section.dataset['element']="panel-card-container";
     section.className="box-panel";
     section.style='background-color:'+bg;
     return [container, section];

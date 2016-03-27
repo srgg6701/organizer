@@ -33,6 +33,7 @@ main > h5{
 }
 #section-cards, #section-categories{
     overflow:auto;
+    padding-top: 4px;
 }
 [data-drop-area="category-container"]{
     margin-top: 10px;
@@ -147,10 +148,13 @@ header +div > .card:not(:first-child){
     background-color: #FFB500;
 }
 .column>[data-task-status="done"]{
-    background-color: #00FAFF;
+    bactask5kground-color: #00FAFF;
 }
 .column.over {
     border: 2px dashed #514378;
+}
+.drag-over{
+    border: solid 4px rgba(155,0,0,0.5);
 }
 .issues{
     background-color: lightyellow;
