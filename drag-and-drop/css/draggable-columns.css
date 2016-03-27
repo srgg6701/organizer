@@ -9,6 +9,9 @@ body{
 h1, h2, h3, h4, h5, header{
     font-family: Verdana, serif;
 }
+h4.header{
+    margin-bottom: 0;
+}
 header{
     color: whitesmoke;
     clear: both;
@@ -29,11 +32,14 @@ main > h2,
 main > h3,
 main > h4,
 main > h5{
-    padding: 0 5px;
+    padding: 0 10px;
 }
 #section-cards, #section-categories{
     overflow:auto;
     padding-top: 4px;
+}
+[data-element="group"]{
+
 }
 [data-drop-area="category-container"]{
     margin-top: 10px;
@@ -131,6 +137,7 @@ header +div > .card:not(:first-child){
     margin: auto 10px 10px;
 }
 .column{
+    margin-top:10px;
     width: 280px;
 }
 .column,
