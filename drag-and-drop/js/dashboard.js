@@ -129,15 +129,11 @@ function drop(event) {
                 }
             },
             getClone = function(container){
-                var clone = draggedElement.cloneNode(true); /*console.log('getClone', {
-                    clone:clone,
-                    draggedElement:draggedElement,
-                    container:container,
-                    arguments:arguments
-                });*/
-                var idToCheck = draggedElement.id + getIdSuffixHyphen(container);
-                    //'_'+receiverParentNode.id.substr(receiverParentNode.id.lastIndexOf("-")+ 1);
-                clone.id=idToCheck; /*console.log('getClone', {
+                var clone = draggedElement.cloneNode(true),
+                    idToCheck = (draggedElement.id.indexOf("_")!=-1)?
+                        getNativeDraggedElementId() :
+                        draggedElement.id;
+                clone.id=idToCheck+getIdSuffixHyphen(container); /*console.log('getClone', {
                     draggedElement:draggedElement,
                     clone:clone,
                     idToCheck:idToCheck
@@ -145,38 +141,53 @@ function drop(event) {
                 return clone;
             },
             checkElementInside = function(elementId, container){
-                if(elementToCheck = document.getElementById(elementId)){
-                    if(container.contains(elementToCheck)){
+                var element = document.getElementById(elementId);
+                console.groupCollapsed('checkElementInside');
+                    console.log({
+                    elementId:elementId,
+                    element:element,
+                    container:container,
+                    arguments:arguments
+                }); console.trace();
+                if(element){
+                    console.log('contains:', container.contains(element));
+                    if(container.contains(element)){
                         console.log('%cПанель уже содержит клон элемента', 'color:orangered');
                         console.groupEnd();
                         return true;
                     }
-                }
+                }   console.groupEnd();
                 return false;
             },
             getIdSuffixHyphen = function(container){
                 return '_'+container.id.substr(container.id.lastIndexOf("-")+ 1);
             },
+            getNativeDraggedElementId = function(){
+                return draggedElement.id.substring(0, draggedElement.id.indexOf("_"));
+            },
             checkNoDraggedElementInContainer = function(container, nativeId){
                 //console.trace();
                 // проверить предположительно существующий клон элемента
                 if(!nativeId) // prefix
-                    nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_"));
-                var panelIdSuffix = getIdSuffixHyphen(container); //'_'+container.id.substr(container.id.lastIndexOf("-")+ 1);
-                return !checkElementInside(nativeId+panelIdSuffix, container);
+                    nativeId =  getNativeDraggedElementId()
+                var containerIdSuffix = getIdSuffixHyphen(container);
+                return !checkElementInside(nativeId+containerIdSuffix, container);
             };
 
         switch (draggedElement.dataset.element) {
             // перемещаем группу
             case 'group':
-                if(this.dataset.element==draggedElement.dataset.element &&
+                if( this.dataset.element==draggedElement.dataset.element &&
                     this.dataset.element=='group'){
                     applyCardRelocation(false, false, false, directionX, 'right');
                 }
                 break;
             // перемещаем категорию
             case 'category':
-
+                if( this.dataset.element==draggedElement.dataset.element &&
+                    this.dataset.element=='category'){
+                    applyCardRelocation();
+                }
                 break;
             // перемещаем карточку
             case 'card':
@@ -185,7 +196,7 @@ function drop(event) {
                     // на карточку
                     case 'card': // выяснить, что является контейнером
                         var elementToCheck, idToCheck/*, receiverParentNode = this.parentNode*/;
-                        console.group('%cРасположить перед/после карточки', 'color:blue');
+                        console.group('%cReceiver: карточкa', 'color:blue');
                         // на панель категорий
                         if(receiverParentNode.dataset.element=='panel-card-container'){
                             console.log('%cНа панель категорий', 'color:violet');
@@ -194,10 +205,14 @@ function drop(event) {
                                 // такого элемента в группе нет
                                 if(!receiverParentNode.contains(draggedElement)){
                                     // проверить предположительно существующий клон элемента
-                                    console.log('%cДобавить в группу как клон', 'color:green');
                                     if(checkNoDraggedElementInContainer(receiverParentNode)){
+                                        console.log('%cДобавить в группу как клон', 'color:green', {
+                                            receiverParentNode:receiverParentNode,
+                                            draggedElement:draggedElement
+                                        });
                                         applyCardRelocation(getClone(receiverParentNode));
                                     }else{
+                                        console.log('%cОбнаружен клон!', 'color:violet')
                                         console.groupEnd();
                                         return false;
                                     }
@@ -208,7 +223,7 @@ function drop(event) {
                                 }
                             }else{ // карточка перемещается из группы
                                 // панель не содержит клона карточки
-                                if(!checkNoDraggedElementInContainer(receiverParentNode, draggedElement.id)){
+                                if(checkNoDraggedElementInContainer(receiverParentNode, draggedElement.id)){
                                     applyCardRelocation(getClone(receiverParentNode));
                                 }else{
                                     console.log('Элемент уже содержится в этой группе');
@@ -248,7 +263,10 @@ function drop(event) {
                         if(isCategorized){
                             // такого элемента в группе нет
                             if(!this.contains(draggedElement)){
-                                if(!checkNoDraggedElementInContainer(this)){
+                                console.log('Категоризированный элемент в группе отсутствует');
+                                // проверить клон
+                                if(!checkNoDraggedElementInContainer(this)){ //receiverElement
+                                    console.log('%cНайден клон!', 'color:orange');
                                     console.groupEnd(); return false;
                                 }
                             }else{
@@ -262,7 +280,7 @@ function drop(event) {
                                 console.groupEnd(); return false;
                             }
                         }
-                        //console.log('receiverParentNode', receiverParentNode);
+                        console.log('%cВсе проверки пройдены, добавляем элемент', 'background-color: rgb(200,200,255)');
                         this.appendChild(getClone(receiverParentNode));
                         console.groupEnd();
                         break;
@@ -317,9 +335,9 @@ function dragEnd(event){
         };
     removeClasses(1);
     removeClasses(2);
+    rebuildData();
     console.groupEnd();
 }
-
 
 function showArgs(event){
     var args=[];

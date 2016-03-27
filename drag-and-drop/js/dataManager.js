@@ -148,3 +148,38 @@ function compileCategory(name, category, bg){
     section.style='background-color:'+bg;
     return [container, section];
 }
+
+function rebuildData(){
+    console.log('rebuildData');
+    var data = { tasks: [], categories: [] },
+        groups, cards,
+        elements=document.querySelectorAll('#section-cards [data-element="group"]');
+    for(var i=0, j=elements.length, group; i<j; i++){
+        group = elements[i];
+        console.group(group.id); // group-new
+        console.dir(group);
+        data.tasks[i]={};
+        groups=data.tasks[i][group.children[0].innerText]=[];
+        groups[0]={
+            alias:group.id.substr(group.id.indexOf('-')+1),
+            bg:group.style.backgroundColor
+        };
+        groups[1]=[];
+        cards=group.childNodes[1].childNodes;
+        for(var ii=0, jj=cards.length, card; ii<jj; ii++){
+            card = cards[ii];
+            groups[1][ii]={};
+            groups[1][ii][card.id.substr(4)]=card.innerHTML;
+            //console.group(card.id);
+            console.dir(card);
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
+    /*
+    elements=document.querySelectorAll('#section-categories" > div[draggable]');
+    [].forEach.call(elements,function(item){
+        console.log(item);
+    });*/
+    console.log('data', data);
+}
