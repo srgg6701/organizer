@@ -88,21 +88,45 @@ function drop(event) {
         });*/
     try {
         var clone,
-            applyCardRelocation = function(receiverCard){
+            receiverCard = this,
+            applyCardRelocation = function(node){
+                if(!node) node = draggedElement;
                 if(directionY=='bottom'){
                     // у текущего элемента есть сосед (следующий)
                     if(receiverCard.nextSibling){
                         // вставить между текущим и соседним
                         console.log('Вставить между текущим и соседним');
-                        receiverCardParentGroup.insertBefore(draggedElement, receiverCard.nextSibling);
+                        receiverCardParentGroup.insertBefore(node, receiverCard.nextSibling);
                     }else{ // соседа нет, т.е., текущий -- последний в контейнере
                         // добавить в контейнер
                         console.log('Добавить в контейнер');
-                        receiverCardParentGroup.appendChild(draggedElement);
+                        receiverCardParentGroup.appendChild(node);
                     }
                 }else{ // со сдвигом вверх
                     console.log('Вставить перед текущим');
-                    receiverCardParentGroup.insertBefore(draggedElement, receiverCard);
+                    receiverCardParentGroup.insertBefore(node, receiverCard);
+                }
+            },
+            setCardToGroup = function(receiver){
+                if(receiverCardParentGroup.id==draggedElement.parentNode.id){
+                    if(receiverCardParentGroup.querySelectorAll('[data-element="card"]').length==1){
+                        console.log('%cГруппа содержит только перемещаемую карточку', 'background-color: #ddd');
+                        console.groupEnd();
+                        return false;
+                    }
+                    console.log('%cИзменить позицию в группе', 'color:rebeccapurple');
+                    // со сдвигом вниз
+                    if(directionY=='bottom'){
+                        // у текущего элемента есть сосед (следующий)
+                        applyCardRelocation();
+                    }else{ // со сдвигом вверх
+                        console.log('Вставить перед текущим');
+                        receiverCardParentGroup.insertBefore(draggedElement, receiver);
+                    }
+                }else{ // другая группа
+                    console.log('%cПереместить в другую группу', 'color:orange');
+                    // со сдвигом вниз
+                    applyCardRelocation();
                 }
             };
 
@@ -120,32 +144,59 @@ function drop(event) {
                 switch (this.dataset.element) {
                     // на карточку
                     case 'card': // выяснить, что является контейнером
-                        var receiverCardParentGroup = this.parentNode;
+                        var receiverCardParentGroup = this.parentNode,
+                            elementToCheck,
+                            categorized = draggedElement.id.indexOf("_")!=-1;
                         console.group('%cРасположить перед/после карточки', 'color:blue');
-                        if(receiverCardParentGroup.dataset.element=='panel-card-container'){ // панель категорий
-                            console.log('%cСкопировать на панель категорий', 'color:violet');
+                        if(receiverCardParentGroup.dataset.element=='panel-card-container'){ // на панель категорий
+                            console.log('%cНа панель категорий', 'color:violet');
+                            // карточка перемещается с другой панели или внутри панели
+                            if(categorized){
+                                // такого элемента в группе нет
+                                if(!receiverCardParentGroup.contains(draggedElement)){
+                                    // проверить клон элемента
+                                    var nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_")),
+                                        panelIdSuffix = receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+1),
+                                        idToCheck = nativeId+'_'+panelIdSuffix;
+                                    // проверить предположительно существующий клон элемента
+                                    if(elementToCheck = document.getElementById(idToCheck)){
+                                        if(receiverCardParentGroup.contains(elementToCheck)){
+                                            console.log('%cПанель уже содержит клон элемента', 'color:orangered');
+                                            console.groupEnd();
+                                            return false;
+                                        }
+                                    }
+                                    console.log('%cДобавить в группу как клон', 'color:green');
+                                    clone = draggedElement.cloneNode(true);
+                                    clone.id=idToCheck;
+                                    applyCardRelocation(clone);
+                                }else{ // такой элемент в группе есть
+                                    // та же самая группа
+                                    setCardToGroup(this);
+                                }
+                            }else{ // карточка перемещается из группы
+                                var idCategorized = draggedElement.id + '_' +receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+1);
+                                elementToCheck = document.getElementById(idCategorized);
+                                    /*console.log({
+                                        idCategorized:idCategorized,
+                                        elementToCheck:elementToCheck
+                                    });*/
+                                // панель не содержит клона карточки
+                                if(!receiverCardParentGroup.contains(elementToCheck)){
+                                    clone = draggedElement.cloneNode(true);
+                                    clone.id=idCategorized;
+                                    //console.log('clone', clone);
+                                    applyCardRelocation(clone);
+                                }else{
+                                    console.log('Элемент уже содержится в этой группе');
+                                    console.groupEnd();
+                                    return false;
+                                }
+                            }
                         }else // группа
                             if(receiverCardParentGroup.dataset.element=='group-card-container'){
                                 // та же самая группа
-                                if(receiverCardParentGroup.id==draggedElement.parentNode.id){
-                                    if(receiverCardParentGroup.querySelectorAll('[data-element="card"]').length==1){
-                                        console.log('%cГруппа содержит только перемещаемую карточку', 'background-color: #ddd');
-                                        return false;
-                                    }
-                                    console.log('%cИзменить позицию в группе', 'color:rebeccapurple');
-                                    // со сдвигом вниз
-                                    if(directionY=='bottom'){
-                                        // у текущего элемента есть сосед (следующий)
-                                        applyCardRelocation(this);
-                                    }else{ // со сдвигом вверх
-                                        console.log('Вставить перед текущим');
-                                        receiverCardParentGroup.insertBefore(draggedElement, this);
-                                    }
-                                }else{ // другая группа
-                                    console.log('%cПереместить в другую группу', 'color:orange');
-                                    // со сдвигом вниз
-                                    applyCardRelocation(this);
-                                }
+                                setCardToGroup(this);
                         }
                         console.groupEnd();
                         break;
@@ -155,15 +206,18 @@ function drop(event) {
                             this.appendChild(draggedElement);
                         }else{
                             console.log('Элемент уже содержится в этой группе');
+                            console.groupEnd();
                             return false;
                         }
                         break;
+                    case 'panel-card-container':
+                        break;
                 }
-
                 break; //group-card-container
 
             default:
                 console.log('%cНичего не делать', 'background-color: #ddd');
+                console.groupEnd();
                 return false;
         }
 
