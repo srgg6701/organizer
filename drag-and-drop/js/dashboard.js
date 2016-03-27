@@ -128,6 +128,11 @@ function drop(event) {
                     // со сдвигом вниз
                     applyCardRelocation();
                 }
+            },
+            handleClone = function(){
+                clone = draggedElement.cloneNode(true);
+                clone.id=idToCheck;
+                applyCardRelocation(clone);
             };
 
         switch (draggedElement.dataset.element) {
@@ -145,19 +150,19 @@ function drop(event) {
                     // на карточку
                     case 'card': // выяснить, что является контейнером
                         var receiverCardParentGroup = this.parentNode,
-                            elementToCheck,
+                            elementToCheck, idToCheck,
                             categorized = draggedElement.id.indexOf("_")!=-1;
                         console.group('%cРасположить перед/после карточки', 'color:blue');
                         if(receiverCardParentGroup.dataset.element=='panel-card-container'){ // на панель категорий
                             console.log('%cНа панель категорий', 'color:violet');
                             // карточка перемещается с другой панели или внутри панели
+                            var panelIdSuffix = '_'+receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+ 1);//categoryIdSuffix
                             if(categorized){
                                 // такого элемента в группе нет
                                 if(!receiverCardParentGroup.contains(draggedElement)){
                                     // проверить клон элемента
-                                    var nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_")),
-                                        panelIdSuffix = receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+1),
-                                        idToCheck = nativeId+'_'+panelIdSuffix;
+                                    var nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_"));
+                                    idToCheck = nativeId + panelIdSuffix;
                                     // проверить предположительно существующий клон элемента
                                     if(elementToCheck = document.getElementById(idToCheck)){
                                         if(receiverCardParentGroup.contains(elementToCheck)){
@@ -167,26 +172,17 @@ function drop(event) {
                                         }
                                     }
                                     console.log('%cДобавить в группу как клон', 'color:green');
-                                    clone = draggedElement.cloneNode(true);
-                                    clone.id=idToCheck;
-                                    applyCardRelocation(clone);
+                                    handleClone();
                                 }else{ // такой элемент в группе есть
                                     // та же самая группа
                                     setCardToGroup(this);
                                 }
                             }else{ // карточка перемещается из группы
-                                var idCategorized = draggedElement.id + '_' +receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+1);
-                                elementToCheck = document.getElementById(idCategorized);
-                                    /*console.log({
-                                        idCategorized:idCategorized,
-                                        elementToCheck:elementToCheck
-                                    });*/
+                                idToCheck = draggedElement.id + panelIdSuffix;
+                                elementToCheck = document.getElementById(idToCheck);
                                 // панель не содержит клона карточки
                                 if(!receiverCardParentGroup.contains(elementToCheck)){
-                                    clone = draggedElement.cloneNode(true);
-                                    clone.id=idCategorized;
-                                    //console.log('clone', clone);
-                                    applyCardRelocation(clone);
+                                    handleClone();
                                 }else{
                                     console.log('Элемент уже содержится в этой группе');
                                     console.groupEnd();
