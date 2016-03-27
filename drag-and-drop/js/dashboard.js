@@ -30,9 +30,8 @@ function dragStart(event){
             }
         });
 
-    //Hello there, <strong>stranger</strong>
     modifyClassList(event.currentTarget, 2, true);
-    //event.dataTransfer.setData("text/html", event.target.outerHTML);
+
     event.dataTransfer.setData("text", event.target.id+':'+event.target.dataset.element+':'+diffX+':'+diffY);
     event.effectAllowed = "copyMove";
     console.groupEnd();
@@ -63,7 +62,7 @@ function dragLeave(event){
 }
 
 function drop(event) {
-    event.preventDefault();
+    //event.preventDefault();
 
     console.group('drop');
 
@@ -89,25 +88,27 @@ function drop(event) {
     try {
         var clone,
             receiverCard = this,
-            applyCardRelocation = function(node){
+            applyCardRelocation = function(node, container){
+                console.trace();
                 if(!node) node = draggedElement;
+                if(!container) container=receiverCardParentGroup;
                 if(directionY=='bottom'){
                     // у текущего элемента есть сосед (следующий)
                     if(receiverCard.nextSibling){
                         // вставить между текущим и соседним
                         console.log('Вставить между текущим и соседним');
-                        receiverCardParentGroup.insertBefore(node, receiverCard.nextSibling);
+                        container.insertBefore(node, receiverCard.nextSibling);
                     }else{ // соседа нет, т.е., текущий -- последний в контейнере
                         // добавить в контейнер
                         console.log('Добавить в контейнер');
-                        receiverCardParentGroup.appendChild(node);
+                        container.appendChild(node);
                     }
                 }else{ // со сдвигом вверх
                     console.log('Вставить перед текущим');
-                    receiverCardParentGroup.insertBefore(node, receiverCard);
+                    container.insertBefore(node, receiverCard);
                 }
             },
-            setCardToGroup = function(receiver){
+            setCardWithinGroup = function(receiver){
                 if(receiverCardParentGroup.id==draggedElement.parentNode.id){
                     if(receiverCardParentGroup.querySelectorAll('[data-element="card"]').length==1){
                         console.log('%cГруппа содержит только перемещаемую карточку', 'background-color: #ddd');
@@ -129,10 +130,42 @@ function drop(event) {
                     applyCardRelocation();
                 }
             },
-            handleClone = function(){
-                clone = draggedElement.cloneNode(true);
-                clone.id=idToCheck;
-                applyCardRelocation(clone);
+            getClone = function(container){
+                var clone = draggedElement.cloneNode(true); /*console.log('getClone', {
+                    clone:clone,
+                    draggedElement:draggedElement,
+                    container:container,
+                    arguments:arguments
+                });*/
+                var idToCheck = draggedElement.id + getIdSuffixHyphen(container);
+                    //'_'+receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+ 1);
+                clone.id=idToCheck; /*console.log('getClone', {
+                    draggedElement:draggedElement,
+                    clone:clone,
+                    idToCheck:idToCheck
+                });*/
+                return clone;
+            },
+            checkElementInside = function(elementId, container){
+                if(elementToCheck = document.getElementById(elementId)){
+                    if(container.contains(elementToCheck)){
+                        console.log('%cПанель уже содержит клон элемента', 'color:orangered');
+                        console.groupEnd();
+                        return true;
+                    }
+                }
+                return false;
+            },
+            getIdSuffixHyphen = function(container){
+                return '_'+container.id.substr(container.id.lastIndexOf("-")+ 1);
+            },
+            checkNoDraggedElementInContainer = function(container, nativeId){
+                //console.trace();
+                // проверить предположительно существующий клон элемента
+                if(!nativeId) // prefix
+                    nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_"));
+                var panelIdSuffix = getIdSuffixHyphen(container); //'_'+container.id.substr(container.id.lastIndexOf("-")+ 1);
+                return checkElementInside(nativeId+panelIdSuffix, container)? false : true;
             };
 
         switch (draggedElement.dataset.element) {
@@ -146,43 +179,37 @@ function drop(event) {
                 break;
             // перемещаем карточку
             case 'card':
+                var isCategorized = draggedElement.id.indexOf("_")!=-1,
+                    receiverCardParentGroup = this.parentNode;
                 switch (this.dataset.element) {
                     // на карточку
                     case 'card': // выяснить, что является контейнером
-                        var receiverCardParentGroup = this.parentNode,
-                            elementToCheck, idToCheck,
-                            categorized = draggedElement.id.indexOf("_")!=-1;
+                        var elementToCheck, idToCheck/*, receiverCardParentGroup = this.parentNode*/;
                         console.group('%cРасположить перед/после карточки', 'color:blue');
-                        if(receiverCardParentGroup.dataset.element=='panel-card-container'){ // на панель категорий
+                        // на панель категорий
+                        if(receiverCardParentGroup.dataset.element=='panel-card-container'){
                             console.log('%cНа панель категорий', 'color:violet');
                             // карточка перемещается с другой панели или внутри панели
-                            var panelIdSuffix = '_'+receiverCardParentGroup.id.substr(receiverCardParentGroup.id.lastIndexOf("-")+ 1);//categoryIdSuffix
-                            if(categorized){
+                            if(isCategorized){
                                 // такого элемента в группе нет
                                 if(!receiverCardParentGroup.contains(draggedElement)){
-                                    // проверить клон элемента
-                                    var nativeId = draggedElement.id.substring(0, draggedElement.id.indexOf("_"));
-                                    idToCheck = nativeId + panelIdSuffix;
                                     // проверить предположительно существующий клон элемента
-                                    if(elementToCheck = document.getElementById(idToCheck)){
-                                        if(receiverCardParentGroup.contains(elementToCheck)){
-                                            console.log('%cПанель уже содержит клон элемента', 'color:orangered');
-                                            console.groupEnd();
-                                            return false;
-                                        }
-                                    }
                                     console.log('%cДобавить в группу как клон', 'color:green');
-                                    handleClone();
+                                    if(checkNoDraggedElementInContainer(receiverCardParentGroup)){
+                                        applyCardRelocation(getClone(receiverCardParentGroup));
+                                    }else{
+                                        console.groupEnd();
+                                        return false;
+                                    }
                                 }else{ // такой элемент в группе есть
-                                    // та же самая группа
-                                    setCardToGroup(this);
+                                    console.log('go setCardWithinGroup 1');
+                                    // только, если та же самая группа
+                                    setCardWithinGroup(this);
                                 }
                             }else{ // карточка перемещается из группы
-                                idToCheck = draggedElement.id + panelIdSuffix;
-                                elementToCheck = document.getElementById(idToCheck);
                                 // панель не содержит клона карточки
-                                if(!receiverCardParentGroup.contains(elementToCheck)){
-                                    handleClone();
+                                if(!checkNoDraggedElementInContainer(receiverCardParentGroup, draggedElement.id)){
+                                    applyCardRelocation(getClone(receiverCardParentGroup));
                                 }else{
                                     console.log('Элемент уже содержится в этой группе');
                                     console.groupEnd();
@@ -191,22 +218,58 @@ function drop(event) {
                             }
                         }else // группа
                             if(receiverCardParentGroup.dataset.element=='group-card-container'){
-                                // та же самая группа
-                                setCardToGroup(this);
+                                console.log('group-card-container',{
+                                    isCategorized:isCategorized,
+                                    draggedElement:draggedElement
+                                });
+                                if(!isCategorized){
+                                    console.log('go setCardWithinGroup 2');
+                                    // только, если та же самая группа
+                                    setCardWithinGroup(this);
+                                }
                         }
                         console.groupEnd();
                         break;
                     case 'group-card-container':
                         if(!this.contains(draggedElement)){
+                            if(isCategorized){
+                                console.log('Не подлежит перемещению в это место');
+                                console.groupEnd(); return false;
+                            }
                             console.log('%cДобавить в группу', 'color:green');
                             this.appendChild(draggedElement);
                         }else{
                             console.log('Элемент уже содержится в этой группе');
-                            console.groupEnd();
-                            return false;
+                            console.groupEnd(); return false;
                         }
                         break;
                     case 'panel-card-container':
+                        console.group('panel-card-container');
+                        if(isCategorized){
+                            // такого элемента в группе нет
+                            if(!this.contains(draggedElement)){
+                                if(!checkNoDraggedElementInContainer(this)){
+                                    console.groupEnd(); return false;
+                                }
+                            }else{
+                                console.log('Категоризированный элемент уже содержится в этой группе');
+                                console.groupEnd(); return false;
+                            }
+                        }else{ // карточка перемещается из группы
+                            // панель не содержит клона карточки
+                            if(!checkNoDraggedElementInContainer(this, draggedElement.id)){
+                                console.log('Некатегоризированный элемент уже содержится в этой группе');
+                                console.groupEnd(); return false;
+                            }
+                        }
+                        //console.log('receiverCardParentGroup', receiverCardParentGroup);
+                        this.appendChild(getClone(receiverCardParentGroup));
+                        console.groupEnd();
+                        break;
+                    case 'category':
+                        console.log('%cЭлемент не может быть сброшен в этом расположении', 'color: violet');
+                        console.groupEnd();
+                        return false;
                         break;
                 }
                 break; //group-card-container
@@ -216,19 +279,9 @@ function drop(event) {
                 console.groupEnd();
                 return false;
         }
-
-        //console.log('target', event.target);
-        /*if (event.target.id == 'dest_' + transferType) {
-            if (transferType == 'copy') {
-                clone = droppingElement.cloneNode(true);
-                clone.id = clone.id + "_copy";
-            }
-            modifyClassList(event.currentTarget, 1);
-            modifyClassList(clone, 2);
-            event.target.appendChild(clone);
-        }*/
     } catch (e) {
-        console.error(e.message);
+        console.error(e.stack);
+        //console.dir(e);
         //console.log('droppingElement', value);
     }   console.groupEnd();
 }
@@ -240,24 +293,30 @@ function dragEnd(event){
     event.dataTransfer.clearData();
     /** • Тут нюанс. Отловить непосредственно элемент event.target.parentNode
      не всегда возможно */
-    modifyClassList(event.currentTarget, 1);
-    modifyClassList(event.currentTarget, 2);
-    /** проверить блоки с неудалённым классом 'drag-over'.
+    //modifyClassList(event.currentTarget, 1);
+    //modifyClassList(event.currentTarget, 2);
+    /** проверить блоки с неудалённым классом 'drag-over/start'.
      ситуация возникает, когда после события *over* не наступает
      событие *leave* для данного объекта, что происходит, если
      перемещаемый элемент не может быть на него сброшен. */
-    var overRemains=document.getElementsByClassName('drag-over');
-    if(overRemains.length){
-        //console.log('overRemains', { length:overRemains.length });
-        //console.dir(overRemains);
-        for(var i= 0; i<overRemains.length; i++){
-            /**
-                не заменять i<overRemains.length на статическую переменную,
-                т.к. состав коллекции обновляется динамически! */
-            //console.log('item', overRemains.item(i));
-            modifyClassList(overRemains[i], 1);
-        }
-    }
+    var elements, suffix,
+        removeClasses = function(classNm){
+            suffix = (classNm==1)? 'over':'start';
+            elements = document.getElementsByClassName('drag-'+suffix);
+            console.dir(elements);
+            if(elements.length){
+                //console.log('elements', { length:elements.length });
+                for(var i= 0; i<elements.length; i++){
+                    /**
+                     не заменять i<elements.length на статическую переменную,
+                     т.к. состав коллекции обновляется динамически! */
+                        //console.log('item', elements.item(i));
+                    modifyClassList(elements[i], classNm);
+                }
+            }
+        };
+    removeClasses(1);
+    removeClasses(2);
     console.groupEnd();
 }
 
@@ -290,7 +349,14 @@ function modifyClassList(element, classNumber, add){
         }else{
             if(element.classList.contains(className)) func='remove';
         }
-        if(func) element.classList[func](className);
+        if(func) {
+            /*console.log('remove class', {
+                '0 element': element,
+                '1 className': className,
+                '2 func': func
+            });*/
+            element.classList[func](className);
+        }
     }
 }
 
