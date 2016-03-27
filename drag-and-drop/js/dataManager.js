@@ -140,7 +140,7 @@ function compileCategory(name, category, bg){
     container.draggable="true";
     container.dataset['element']="category";
     container.className="box-panel-container";
-    header.appendChild(document.createTextNode('Category'+category));
+    header.appendChild(document.createTextNode('Category: '+category));
     container.appendChild(header);
     section.id="box-rows-"+name;
     section.dataset['element']="panel-card-container";
@@ -152,7 +152,7 @@ function compileCategory(name, category, bg){
 function rebuildData(){
     console.log('rebuildData');
     var data = { tasks: [], categories: [] },
-        groups, cards,
+        groups, cards, cats, cat, header,
         elements=document.querySelectorAll('#section-cards [data-element="group"]');
     for(var i=0, j=elements.length, group; i<j; i++){
         group = elements[i];
@@ -170,16 +170,27 @@ function rebuildData(){
             card = cards[ii];
             groups[1][ii]={};
             groups[1][ii][card.id.substr(4)]=card.innerHTML;
-            //console.group(card.id);
-            console.dir(card);
-            console.groupEnd();
+            //console.group(card.id); //console.dir(card); //console.groupEnd();
         }
         console.groupEnd();
     }
-    /*
-    elements=document.querySelectorAll('#section-categories" > div[draggable]');
-    [].forEach.call(elements,function(item){
-        console.log(item);
-    });*/
+    elements=document.querySelectorAll('#section-categories [data-element="category"]');
+    for(i=0, j=elements.length; i<j; i++){
+        cat=elements[i];
+        data.categories[i]={};
+        header = cat.children[0].innerText; //-Category:
+        cats=data.categories[i][header.substr(10)]=[];
+        cats[0]={
+            alias:cat.id.substr(cat.id.lastIndexOf('-')+1),
+            bg:cat.childNodes[1].style.backgroundColor
+        };
+        console.dir(cat.childNodes);
+        cats[1]=[];
+        cards=cat.childNodes[1].childNodes;
+        for(ii=0, jj=cards.length, card; ii<jj; ii++){
+            card = cards[ii];
+            cats[1].push(card.id.substring(4,card.id.indexOf("_")));
+        }
+    }
     console.log('data', data);
 }
