@@ -1,3 +1,7 @@
+/**
+ * Запросить файл
+ * @returns {Promise}
+ */
 function getData() {
     return new Promise(function (resolve, reject) {
 
@@ -13,7 +17,6 @@ function getData() {
                 reject(error);
             }
         };
-
         xhr.onerror = function () {
             reject(new Error("Network Error"));
         };
@@ -21,7 +24,9 @@ function getData() {
         xhr.send();
     });
 }
-
+/**
+ * Построить DOM
+ */
 function manageData() {
     var storedData,
         buildContents = function (data) {
@@ -32,11 +37,6 @@ function manageData() {
                 cardContainer, cardClose, groupContainer, groupCardsContainer,
                 sectionCards = document.getElementById('section-cards'),
                 sectionCategories = document.getElementById('section-categories');
-
-            console.groupCollapsed('getData');
-            console.log('contents', contents);
-            /*console.groupEnd();
-             return false;*/
 
             // создать группу карточек
             //for (var cat in contents.tasks) {
@@ -69,13 +69,13 @@ function manageData() {
             var panel, container, section, pos, nativeId;
             //for(var cat in contents.categories){
             contents.categories.forEach(function (category) { // => array[ object, object ] ]
-                //console.log({cat:cat, contents:categorySet});
+
                 card = '';
                 categorySet = category[0]; // => { header: [ {}, [] ] }
                 categoryHeader = Object.keys(categorySet)[0]; // "User experience" end so on
                 // categorySet[categoryHeader] => [ 0:{ alias: alias, bg: background }, 1:[ taskId, taskId, ... ]
                 panel = compileCategory(categorySet[categoryHeader][0].alias, categoryHeader, categorySet[categoryHeader][0].bg);
-                //console.log('%ccategories', 'color:green', { cats: categorySet[1], cards:cards });
+
                 container = panel[0];
                 section = panel[1];
                 categorySet[categoryHeader][1].forEach(function (objTaskId) {
@@ -84,7 +84,6 @@ function manageData() {
                     nativeId = (pos != -1) ?
                         card[0].id.substr(0, pos) : card[0].id;
                     card[0].id = nativeId + '_' + categorySet[categoryHeader][0].alias;
-                    //console.log('card[0].id', card[0].id);
                     card[0].appendChild(card[1]);
                     card[0].appendChild(card[2]);
                     section.appendChild(card[0]);
@@ -93,28 +92,25 @@ function manageData() {
                 sectionCategories.appendChild(container);
             });
 
-            console.groupEnd();
-
             var elements = document.querySelectorAll('[draggable="true"]');
-            [].forEach.call(elements, function (item) { //console.log(item);
+            [].forEach.call(elements, function (item) {
                 item.addEventListener('dragstart', dragStart);
-                item.addEventListener('drag', drag);
+                // item.addEventListener('drag', drag);
                 item.addEventListener('dragend', dragEnd);
             });
 
             elements = document.querySelectorAll('[data-element]');
-            [].forEach.call(elements, function (item) { //console.log(item);
+            [].forEach.call(elements, function (item) {
                 item.addEventListener('dragover', dragOver);
-                item.addEventListener('dragenter', dragEnter);
+                // item.addEventListener('dragenter', dragEnter);
                 item.addEventListener('dragleave', dragLeave);
                 item.addEventListener('drop', drop);
             });
         };
-    //console.log('dragStore', window.dragStore);
-    if (storedData = getStoredData()/* && 1>2*/) {
-        //console.log('storedData', storedData);
+    // сначала посмотрим в localStorage. Если ничего нет, возьмём из локального файла
+    if (storedData = getStoredData()) {
         buildContents(storedData);
-    } else {    console.log('no storedData');
+    } else {
         getData()
             .then(function (response) {
                 buildContents(response);
@@ -123,9 +119,13 @@ function manageData() {
             });
     }
 }
-
+/**
+ * Скомпилировать контейнер группы
+ * @param header
+ * @param status
+ * @returns {*[]}
+ */
 function compileGroup(header, status) {
-    console.groupCollapsed('compileGroup', header, status);
     var groupContainer = document.createElement('div'),
         groupHeader = document.createElement('header'),
         groupCardsContainer = document.createElement('div');
@@ -136,9 +136,15 @@ function compileGroup(header, status) {
     groupContainer.appendChild(groupHeader);
     groupCardsContainer.dataset['element'] = "group-card-container";
     groupCardsContainer['data-group-status'] = status;
-    console.groupEnd();
     return [groupContainer, groupCardsContainer];
 }
+/**
+ * Скомпилировать контент карточки
+ * @param id
+ * @param status
+ * @param contents
+ * @returns {*[]}
+ */
 function compileCard(id, status, contents) {
     var divContainer = document.createElement('div'),
         divClose = document.createElement('div');
@@ -153,6 +159,13 @@ function compileCard(id, status, contents) {
     divClose.addEventListener('click', removeIssueCopyFromPanel);
     return [divContainer, divClose];
 }
+/**
+ * Скомпилировать контеёнер категории
+ * @param category_alias
+ * @param categoryHeader
+ * @param bg
+ * @returns {*[]}
+ */
 function compileCategory(category_alias, categoryHeader, bg) {
     var container = document.createElement('div'),
         header = document.createElement('header'),
@@ -169,9 +182,11 @@ function compileCategory(category_alias, categoryHeader, bg) {
     section.style = 'background-color:' + bg;
     return [container, section];
 }
+/**
+ * Перестроить модель данных для синхронизации с localStorage/DB/JSON and so on
+ */
 // см. data.json
 function rebuildData() {
-    //console.log('rebuildData');
     // { ► open contents { tasks: [ [ { taskHeader: [ { alias: alias, bg: background }, [ { taskId: taskText }, {...}, {...} ] ] } ], [], [], ... ], categories: [  ]}
     var contents = {tasks: [], categories: []},
         groupTasksSet, currentTaskGroup, taskArray, cards,
@@ -179,7 +194,7 @@ function rebuildData() {
         elements = document.querySelectorAll('#section-cards [data-element="group"]');
     // tasks: [ ► tasks array
     for (var i = 0, j = elements.length; i < j; i++) {
-        currentTaskGroup = elements[i]; //console.group(tasksGroup.id);  console.dir(tasksGroup);
+        currentTaskGroup = elements[i];
         // [ ► create an array for every task set ─ [{ header1: [array] }], [{ header2: [array] }] ...
         taskArray = contents.tasks[i] = [];
         // { ► create container for the current task set { header: [] }
@@ -198,23 +213,16 @@ function rebuildData() {
         // [  ► create task id & text block [ { 1:text }, {...}, {...} ]
         groupTasksSet[1] = [];
         cards = currentTaskGroup.childNodes[1].childNodes;
-        console.log('cards', cards);
+
         for (var ii = 0, jj = cards.length, task; ii < jj; ii++) {
             task = cards[ii];
             groupTasksSet[1][ii] = {};
             // {
             groupTasksSet[1][ii][task.id.substr(4)] = task.innerText;
-            console.dir(groupTasksSet[1][ii][task.id.substr(4)])
-            console.log('task content',
-                {
-                    text: groupTasksSet[1][ii][task.id.substr(4)],
-                    children: groupTasksSet[1][ii][task.id.substr(4)].childNodes
-                });
             //  "[card_id]": "Тут некая задача из тех, что назначены, но ещё не начаты"
             // },
             //{...}, {...}, {...}
-            //console.group(card.id); //console.dir(card); //console.groupEnd();
-        }   //console.groupEnd();
+        }
         // ] ■ close task id & text block (Array)
         // ] ■ close task contents block (Array)
         // } ■ close current task container (Object)
@@ -239,7 +247,7 @@ function rebuildData() {
         categorySet[0] = {// the current category "config" block
             alias: currentCategory.id.substr(currentCategory.id.lastIndexOf('-') + 1),
             bg: currentCategory.childNodes[1].style.backgroundColor
-        };  //console.dir(cat.childNodes);
+        };
         // }, ■ close category "config" block (Object)
         // [  ► open attached tasks ids block [1,4,5, ...n]
         categorySet[1] = [];
@@ -257,15 +265,22 @@ function rebuildData() {
     // ] ■ end of categories array
     // } ■ end of "categories" field
     // } ■ close contents
-    console.log('data', contents);
+    // сохранить всё, что нажито непосильным трудом
     storeData(contents);
 }
-
+/**
+ * Сохранить
+ * @param contents
+ * @param dataName
+ */
 function storeData(contents, dataName) {
     if (!dataName) dataName = "dashboard";
     localStorage.setItem(dataName, JSON.stringify(contents));
 }
-
+/**
+ * Извлечь
+ * @param dataName
+ */
 function getStoredData(dataName) {
     if (!dataName) dataName = "dashboard";
     return localStorage.getItem(dataName);
