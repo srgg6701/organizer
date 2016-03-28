@@ -1,5 +1,5 @@
 window.onload = function(){
-    console.log('dashboard works');
+    //console.log('dashboard works');
     document.onmouseup=function(event){
         console.log('coordinates', {
             clientX:event.clientX,
@@ -169,7 +169,7 @@ function drop(event) {
                 //console.trace();
                 // проверить предположительно существующий клон элемента
                 if(!nativeId) // prefix
-                    nativeId =  getNativeDraggedElementId()
+                    nativeId =  getNativeDraggedElementId();
                 var containerIdSuffix = getIdSuffixHyphen(container);
                 return !checkElementInside(nativeId+containerIdSuffix, container);
             };
@@ -212,7 +212,7 @@ function drop(event) {
                                         });
                                         applyCardRelocation(getClone(receiverParentNode));
                                     }else{
-                                        console.log('%cОбнаружен клон!', 'color:violet')
+                                        console.log('%cОбнаружен клон!', 'color:violet');
                                         console.groupEnd();
                                         return false;
                                     }

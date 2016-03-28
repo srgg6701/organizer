@@ -26,22 +26,27 @@ function manageData(){
     getData()
         .then(function(response) {
             var contents = JSON.parse(response),
+                groupHeader, taskSet, categoryHeader, categorySet,
                 taskId, value, group, card, cardNodes, cards={},
                 sectionCards = document.getElementById('section-cards'),
                 sectionCategories = document.getElementById('section-categories');
             console.groupCollapsed('getData');
             // создать группу карточек
             var cardContainer, cardClose, groupContainer, groupCardsContainer;
-            for (var cat in contents.tasks) {
+            //for (var cat in contents.tasks) {
+            contents.tasks.forEach( function(taskGroup){ // => array[ object, object ]
                 card = '';
-                group = compileGroup(cat, contents.tasks[cat][0].alias);
+                taskSet = taskGroup[0]; // => { header: [ {}, [] ] }
+                groupHeader = Object.keys(taskSet)[0]; // "Not started", "Done" etc
+                // taskSet[groupHeader] => [ 0:{ alias: alias, bg: background }, 1:[ taskId: taskText ] ]
+                group = compileGroup(groupHeader, taskSet[groupHeader][0].alias);
                 groupContainer = group[0];
                 groupCardsContainer = group[1];
                 //
-                contents.tasks[cat][1].forEach(function (category) {
-                    taskId = Object.keys(category)[0];
-                    value = category[taskId];
-                    cardNodes = compileCard(taskId, contents.tasks[cat][0].alias, value);
+                taskSet[groupHeader][1].forEach(function (currentTaskSet) {
+                    taskId = Object.keys(currentTaskSet)[0];
+                    value = currentTaskSet[taskId];
+                    cardNodes = compileCard(taskId, taskSet[groupHeader][0].alias, value);
                     cardContainer = cardNodes[0];
                     cardClose = cardNodes[1];
                     cards[taskId]=[cardContainer.cloneNode(), document.createTextNode(value), cardClose.cloneNode()];
@@ -49,26 +54,30 @@ function manageData(){
                     groupCardsContainer.appendChild(cardContainer);
                 });
                 groupContainer.appendChild(groupCardsContainer);
-                groupContainer.id="group-"+contents.tasks[cat][0].alias;
-                groupContainer.style='background-color:'+contents.tasks[cat][0].bg;
+                groupContainer.id="group-"+taskSet[groupHeader][0].alias;
+                groupContainer.style='background-color:'+taskSet[groupHeader][0].bg;
                 sectionCards.appendChild(groupContainer);
 
-            }
+            });
             // добавить панели категорий
             var panel, container, section, pos, nativeId;
-            for(var cat in contents.categories){
-                //console.log({cat:cat, contents:contents.categories[cat]});
+            //for(var cat in contents.categories){
+            contents.categories.forEach(function(category){ // => array[ object, object ] ]
+                //console.log({cat:cat, contents:categorySet});
                 card='';
-                panel = compileCategory(contents.categories[cat][0].alias, cat, contents.categories[cat][0].bg);
-                //console.log('%ccategories', 'color:green', { cats: contents.categories[cat][1], cards:cards });
+                categorySet = category[0]; // => { header: [ {}, [] ] }
+                categoryHeader = Object.keys(categorySet)[0]; // "User experience" end so on
+                // categorySet[categoryHeader] => [ 0:{ alias: alias, bg: background }, 1:[ taskId, taskId, ... ]
+                panel = compileCategory(categorySet[categoryHeader][0].alias, categoryHeader, categorySet[categoryHeader][0].bg);
+                //console.log('%ccategories', 'color:green', { cats: categorySet[1], cards:cards });
                 container = panel[0];
                 section = panel[1];
-                contents.categories[cat][1].forEach(function (objTaskId){
+                categorySet[categoryHeader][1].forEach(function (objTaskId){
                     card=cards[objTaskId];
                     pos=card[0].id.indexOf('_');
                     nativeId=(pos!=-1)?
                         card[0].id.substr(0,pos):card[0].id;
-                    card[0].id=nativeId+'_'+contents.categories[cat][0].alias;
+                    card[0].id=nativeId+'_'+categorySet[0].alias;
                     //console.log('card[0].id', card[0].id);
                     card[0].appendChild(card[1]);
                     card[0].appendChild(card[2]);
@@ -76,7 +85,7 @@ function manageData(){
                 });
                 container.appendChild(section);
                 sectionCategories.appendChild(container);
-            }
+            });
 
             console.groupEnd();
 
@@ -132,7 +141,7 @@ function compileCard(id, status, contents){
     divClose.addEventListener('click', removeIssueCopyFromPanel);
     return [divContainer, divClose];
 }
-function compileCategory(name, category, bg){
+function compileCategory(category_alias, categoryHeader, bg){
     var container   = document.createElement('div'),
         header      = document.createElement('header'),
         section     = document.createElement('section');
@@ -140,57 +149,94 @@ function compileCategory(name, category, bg){
     container.draggable="true";
     container.dataset['element']="category";
     container.className="box-panel-container";
-    header.appendChild(document.createTextNode('Category: '+category));
+    header.appendChild(document.createTextNode('Category: '+categoryHeader));
     container.appendChild(header);
-    section.id="box-rows-"+name;
+    section.id="box-rows-"+category_alias;
     section.dataset['element']="panel-card-container";
     section.className="box-panel";
     section.style='background-color:'+bg;
     return [container, section];
 }
-
+// см. data.json
 function rebuildData(){
-    console.log('rebuildData');
-    var data = { tasks: [], categories: [] },
-        groups, cards, cats, cat, header,
+    //console.log('rebuildData');
+    // { ► open contents { tasks: [ [ { taskHeader: [ { alias: alias, bg: background }, [ { taskId: taskText }, {...}, {...} ] ] } ], [], [], ... ], categories: [  ]}
+    var contents = { tasks: [], categories: [] },
+        groupTasksSet, currentTaskGroup, taskArray, cards,
+        categorySet, currentCategory, categoryArray, attachedTasks,
         elements=document.querySelectorAll('#section-cards [data-element="group"]');
-    for(var i=0, j=elements.length, group; i<j; i++){
-        group = elements[i];
-        console.group(group.id); // group-new
-        console.dir(group);
-        data.tasks[i]={};
-        groups=data.tasks[i][group.children[0].innerText]=[];
-        groups[0]={
-            alias:group.id.substr(group.id.indexOf('-')+1),
-            bg:group.style.backgroundColor
+        // tasks: [ ► tasks array
+    for(var i=0, j=elements.length; i<j; i++){
+        currentTaskGroup = elements[i]; //console.group(tasksGroup.id);  console.dir(tasksGroup);
+            // [ ► create an array for every task set ─ [{ header1: [array] }], [{ header2: [array] }] ...
+        taskArray=contents.tasks[i]=[];
+              // { ► create container for the current task set { header: [] }
+        taskArray[0]={};
+                  // "Not started": [ ► create an data array to store the current group "config" & data
+        groupTasksSet=taskArray[0][currentTaskGroup.children[0].innerText]=[];
+                      // array's elements {alias:alias, bg:backgroundColor}, [task_id: task_text]
+                      // {  ► open task "config" block [0:{}]
+                        // alias: "new",
+                        // bg: "rgb(255, 140, 0)"
+        groupTasksSet[0]={  // the current task "config" block
+            alias:currentTaskGroup.id.substr(currentTaskGroup.id.indexOf('-')+1),
+            bg:currentTaskGroup.style.backgroundColor
         };
-        groups[1]=[];
-        cards=group.childNodes[1].childNodes;
-        for(var ii=0, jj=cards.length, card; ii<jj; ii++){
-            card = cards[ii];
-            groups[1][ii]={};
-            groups[1][ii][card.id.substr(4)]=card.innerHTML;
+                      // }, ■ close task "config" block (Object)
+                      // [  ► create task id & text block [ { 1:text }, {...}, {...} ]
+        groupTasksSet[1]=[];
+        cards=currentTaskGroup.childNodes[1].childNodes;
+        for(var ii=0, jj=cards.length, task; ii<jj; ii++){
+            task = cards[ii];
+            groupTasksSet[1][ii]={};
+                        // {
+            groupTasksSet[1][ii][task.id.substr(4)]=task.innerHTML;
+                        //  "[card_id]": "Тут некая задача из тех, что назначены, но ещё не начаты"
+                        // },
+                        //{...}, {...}, {...}
             //console.group(card.id); //console.dir(card); //console.groupEnd();
-        }
-        console.groupEnd();
+        }   //console.groupEnd();
+                      // ] ■ close task id & text block (Array)
+                  // ] ■ close task contents block (Array)
+              // } ■ close current task container (Object)
+            // ] ■ close current task set (Array)
     }
+        // ], ■ end of tasks array
+      // } ■ end of "tasks" field
     elements=document.querySelectorAll('#section-categories [data-element="category"]');
+        // categories: [ ► categories array
     for(i=0, j=elements.length; i<j; i++){
-        cat=elements[i];
-        data.categories[i]={};
-        header = cat.children[0].innerText; //-Category:
-        cats=data.categories[i][header.substr(10)]=[];
-        cats[0]={
-            alias:cat.id.substr(cat.id.lastIndexOf('-')+1),
-            bg:cat.childNodes[1].style.backgroundColor
-        };
-        console.dir(cat.childNodes);
-        cats[1]=[];
-        cards=cat.childNodes[1].childNodes;
-        for(ii=0, jj=cards.length, card; ii<jj; ii++){
-            card = cards[ii];
-            cats[1].push(card.id.substring(4,card.id.indexOf("_")));
+        currentCategory=elements[i];
+            // [ ► create an array for every category set ─ [{ header1: [array] }], [{ header2: [array] }]
+        categoryArray=contents.categories[i]=[];
+                // { ► create container for the current category set { header: [] }
+        categoryArray[0]={};
+                  // "User experience": [ ► create an array to store the current category "config" & attached tasks set
+        categorySet=categoryArray[0][currentCategory.children[0].innerText.substr(10)]=[];
+                    // array's elements {alias:alias, bg:backgroundColor}, [task_id, taks_id, ...]
+                    // {  ► open "category config block" [0:{}]
+                        // alias: "user_experience",
+                        // bg: "#5F9EA0"
+        categorySet[0]={// the current category "config" block
+            alias:currentCategory.id.substr(currentCategory.id.lastIndexOf('-')+1),
+            bg:currentCategory.childNodes[1].style.backgroundColor
+        };  //console.dir(cat.childNodes);
+                    // }, ■ close category "config" block (Object)
+                    // [  ► open attached tasks ids block [1,4,5, ...n]
+        categorySet[1]=[];
+        attachedTasks=currentCategory.childNodes[1].childNodes;
+        for(ii=0, jj=attachedTasks.length, task; ii<jj; ii++){
+            task = attachedTasks[ii];
+                        // 1, 3, 4, 6, ....n
+            categorySet[1].push(task.id.substring(4,task.id.indexOf("_")));
         }
+                    // ] ■ close attached tasks ids block (Array)
+                  // ] ■ close category data block (Array)
+                // } ■ close category contents block (Object)
+            // ] ■ close category set array
     }
-    console.log('data', data);
+        // ] ■ end of categories array
+      // } ■ end of "categories" field
+    // } ■ close contents
+    console.log('data', contents);
 }
