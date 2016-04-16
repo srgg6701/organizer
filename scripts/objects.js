@@ -20,5 +20,27 @@ function discoverObjectInDepth(ob){
         }
     }
 }
-discoverObjectInDepth(ob);
+//discoverObjectInDepth(ob);
 
+var salaries = {
+    vasja:500,
+    petja:1400,
+    masha:350,
+    gosha:1000
+};
+
+/*var sum=0;
+Object.keys(salaries).forEach(function(key){
+    sum+=salaries[key];
+    console.log('sum', sum);
+    return sum;
+});*/
+
+var biggest=0;
+for(var s in salaries){
+    if (salaries[s]>biggest){
+        biggest=salaries[s];
+    }
+}
+console.log('biggest:', biggest);
+//console.log('sum', sum);

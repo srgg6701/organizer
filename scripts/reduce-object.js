@@ -1,60 +1,24 @@
+// http://stackoverflow.com/questions/36391032/js-strange-result-while-accessing-to-arguments-by-key/36391377#36391377
 var getArgs=function(){
-    var ob = arguments,
-        keys = Object.keys(arguments),
-        result, curr, prev;
-    console.log(typeof ob, { keys:keys, arguments:arguments, ob:ob, '-----------------------------------':'' });
-    keys.forEach(function(arg){
-        curr = +arg;
-        if(curr>=0){
-            prev = (curr-1);
-            if(ob[prev]){
-                //console.log('prev = '+(prev), 'curr = '+curr);
-                console.log(prev, curr, {
-                    arguments: [
-                        arguments[prev],
-                        arguments[curr]
-                    ],
-                    ob:[
-                        ob[prev],
-                        ob[curr]
-                    ]
-                });
-                if(!result || ob[curr]>result) result = ob[curr];
-                //console.log('result: '+result);
-            }
-        }
-    });
-    console.log('result = '+result);
-    /*keys.forEach(function(curr){
-       console.log(curr, ob[curr])
-    });*/
-    /*for(var k in ob){
-       console.log(k, ob[k]);
-    }*/
-    /*[0,1,2,3,4,5,6].forEach(function(curr){
-        console.log(curr, ob[key])
-    });*/
+    var keys = Object.keys(arguments),
+        args= arguments;
 
+    /*for(var argKey in arguments){
+        console.log('argument['+argKey+'] = '+arguments[argKey]);
+    }*/
+    //console.log('args', args);
+    //var arr = ['one', 'two', 'three'];
+    ['one', 'two', 'three'].forEach(function(argKey, index, arrAll){
+        console.log({
+            argKey:argKey,
+            //arr: arr,
+            //arrIndex:arr[index],
+            arrAllIndex:arrAll[index],
+            index:index
+        });
+        //console.log('current args: '+args[argKey]);
+        //console.log('argument['+argKey+'] = '+arguments[argKey]);
+    });
 };
 
 getArgs(5,3,2,11,15,7,-25);
-//getArgs('first','second','third','fourth','fifth','sixth');
-
-var getArgsArray=function(){
-    var arr = arguments[0];
-    console.log({
-        'art keys': Object.keys(arr),
-        'arr':arr
-    });
-    var max=arr.reduce(function(prev, next){
-        console.log(
-            'prev: '+ prev,
-            'next: ' + next
-        );
-        return (next>prev) ? next:prev;
-    });
-    console.log('max = '+max);
-    return max;
-};
-
-//getArgsArray([5,3,2,11,15,7,-25]);
