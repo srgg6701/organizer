@@ -4,52 +4,76 @@ window.onload = function(){
         carouselBox = document.getElementById('carousel-box'),
         carouselBoxWidth = carouselBox.offsetWidth,
         carouselBoxContainer = carouselBox.getElementsByTagName('section')[0],
-        slides = carouselBox.getElementsByTagName('div'),
         getFirstSlide = function(){
             return carouselBoxContainer.getElementsByTagName('div')[0];
         },
-        interv, interv2, stopCarousel;
-    btnStart.onclick = function(){
+        pause = 2000,
+        tm = 100, steps = pause/tm,
+        stepLen = carouselBoxWidth/steps, // 400/20 = 20
+        leftStart,
+        cnt= 0,
+        cntOuter= 1,
+        stopCarousel,
+        blockCarouselStopping,
+        tryCarouselRun,
+        outerTm;
+
+    function innerLoop(){
+        console.log('%cinnerLoop', 'color:blue');
+        //console.groupCollapsed('start innerLoop');
+        blockCarouselStopping=true;
+        cntOuter++;
+        cnt=0;
+        leftStart = -carouselBoxWidth;
+
+        var interv2 = setInterval(function(){
+            //console.groupCollapsed('innerLoop Interval');
+            //console.log('interv2: %c'+interv2, 'color: rebeccapurple', 'counter:' + cnt*tm);
+            cnt++; // 1, 2, 3, 4 ...
+            leftStart-=stepLen; // 20 *(1|2|3)
+            // -400 -= 20*(1|2|3)
+            carouselBoxContainer.style.left=leftStart+'px';
+            //
+            if(pause===(cnt*tm)){
+                carouselBoxContainer.appendChild(getFirstSlide());
+                clearInterval(interv2);
+                carouselBoxContainer.style.left=-carouselBoxWidth+'px';
+                blockCarouselStopping=false;
+                if(tryCarouselRun){
+                    tryCarouselRun=false;
+                    runCarousel();
+                }
+            }   // console.groupEnd();
+        }, tm); // console.groupEnd();
+    }
+
+    function runCarousel(){
+
+        if(blockCarouselStopping) {
+            tryCarouselRun=true;
+            console.log('%ccancel runCarousel', 'background-color:yellow');
+            return false;
+        }   console.log('%crunCarousel', 'background-color:lightskyblue');
         toggleButtons();
         stopCarousel=false;
-        var pause = 1000, tm = 100, steps = pause/tm, // 20
-            stepLen = carouselBoxWidth/steps, // 400/20 = 20
-            leftStart,
-            cnt=0, cntOuter= 1,
-            innerLoop = function moveSlide(){
-                //console.groupCollapsed('start innerLoop');
-                cntOuter++;
-                leftStart = -carouselBoxWidth;
-                interv2 = setInterval(function(){
 
-                    cnt++; // 1, 2, 3, 4 ...
-                    leftStart-=stepLen; // 20 *(1|2|3)
-                    // -400 -= 20*(1|2|3)
-                    carouselBoxContainer.style.left=leftStart+'px';
+        innerLoop();
+        var interv = outerTm = setInterval(function (){
+            //console.log('%crun innerLoop', 'background-color:violet', 'interv: '+interv);
+            if(!stopCarousel) innerLoop();
 
-                    if(pause===(cnt*tm)){
-                        carouselBoxContainer.appendChild(getFirstSlide());
-                        clearInterval(interv2);
-                        carouselBoxContainer.style.left=-carouselBoxWidth+'px';
-                        if(stopCarousel) {
-                            clearInterval(interv2);
-                        }
-                    }
-                }, tm); //console.groupEnd();
-            };
+        }, 4000);
+    }
 
-            innerLoop();
+    btnStart.onclick = runCarousel;
 
-            interv = setInterval(function moveSlides(){
-                cnt=0;
-                (stopCarousel) ? clearInterval(interv) : innerLoop();
-            }, 4000);
-    };
     btnStop.onclick = function(){
-        //console.log('stop!');
         stopCarousel = true;
+        console.log('%cstop Carousel', 'color:brown');
+        clearInterval(outerTm);
         toggleButtons();
     };
+
     function toggleButtons(){
         var disabled = 'disabled';
         [btnStart,btnStop].forEach(function (button) {

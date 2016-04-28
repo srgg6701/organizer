@@ -11,12 +11,11 @@ button{
     margin: 20px auto auto;
 }
 #carousel-box{
-    box-shadow: 0 0 75px 0 rgba(0,0,0,0.15);
+    box-shadow: 0 0 75px 0 rgba(0,0,0,0.25);
     height: 200px;
     margin: 100px auto auto;
     max-width: 400px;
     overflow: hidden;
-    /*outline: solid 3px #ddd;*/
     position: relative;
 }
 #carousel-box >section{
