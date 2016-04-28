@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sandbox default</title>
+</head>
+<body>
+<p><a href="javascript:void(0)" onclick="getPromised('data.json')">getPromised</a> and look at console output. If you
+    want to get back an empty content, click
+    <a href="javascript:void(0)" onclick="getPromised('data_empty.json')">here</a>.</p>
+<p>If you like to find nonexistent stuff, then just click <a href="javascript:void(0)"
+                                                             onclick="getPromised('data_nonexistent.json')">here</a>.
+</p>
+<script>
+    function getPromised(filename) {
+        //
+        var xhr = new XMLHttpRequest(),
+            promise = new Promise(function (resolve, reject) {
+                xhr.open('get', '../../data/' + filename, true);
+                xhr.onload = function () {
+                    if (xhr.status !== 200) return false;
+                    if (xhr.responseText) {
+                        console.log('Got required content!');
+                        resolve(xhr.responseText);
+                    } else {
+                        reject(Error('No any content...'));
+                    }
+                };
+                xhr.onerror = function () {
+                    reject(Error(xhr.statusText));
+                };
+                xhr.send();
+            });
+        promise.then(function (response) {
+            console.log('response: ', JSON.parse(response));
+        }, function (error) {
+            console.log(error);
+        });
+    }
+</script>
+</body>
+</html>

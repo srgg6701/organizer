@@ -1,0 +1,10 @@
+{
+  "name":"Amino",
+  "last_name":"Acid",
+  "area":"Chemistry",
+  "params":{
+      "score":15,
+      "category":"science",
+      "age":"eternal"
+  }
+}
