@@ -8,14 +8,10 @@ window.onload = function(){
         getFirstSlide = function(){
             return carouselBoxContainer.getElementsByTagName('div')[0];
         },
-        slidesLength = slides.length,
-        interv, interv2, stop1, stop2;
+        interv, interv2, stopCarousel;
     btnStart.onclick = function(){
-        /*console.log({
-            carouselBox:carouselBox,
-            carouselBoxContainer:carouselBoxContainer,
-            slides:slides
-        });*/ // 400/10
+        toggleButtons();
+        stopCarousel=false;
         var pause = 1000, tm = 100, steps = pause/tm, // 20
             stepLen = carouselBoxWidth/steps, // 400/20 = 20
             leftStart,
@@ -25,38 +21,42 @@ window.onload = function(){
                 cntOuter++;
                 leftStart = -carouselBoxWidth;
                 interv2 = setInterval(function(){
+
                     cnt++; // 1, 2, 3, 4 ...
                     leftStart-=stepLen; // 20 *(1|2|3)
                     // -400 -= 20*(1|2|3)
                     carouselBoxContainer.style.left=leftStart+'px';
-                    /*console.log({
-                        count:cnt*tm,
-                        styleLeft:carouselBoxContainer.style.left
-                    });*/
-                    if(stop2) clearInterval(interv2);
+
                     if(pause===(cnt*tm)){
                         carouselBoxContainer.appendChild(getFirstSlide());
                         clearInterval(interv2);
                         carouselBoxContainer.style.left=-carouselBoxWidth+'px';
-                        //console.log('stop! carouselBoxWidth: '+carouselBoxWidth+' : '+carouselBoxContainer.style.left);
+                        if(stopCarousel) {
+                            clearInterval(interv2);
+                        }
                     }
-                }, tm); // 10
-                //console.groupEnd();
+                }, tm); //console.groupEnd();
             };
 
             innerLoop();
 
             interv = setInterval(function moveSlides(){
-                //console.group('start interv, cntOuter = '+cntOuter+', slidesLength = '+slidesLength);
                 cnt=0;
-                innerLoop();
-                if(stop1) clearInterval(interv);
-                //console.groupEnd();
+                (stopCarousel) ? clearInterval(interv) : innerLoop();
             }, 4000);
     };
     btnStop.onclick = function(){
-        console.log('stop!');
-        stop1 = true;
-        stop2 = true;
+        //console.log('stop!');
+        stopCarousel = true;
+        toggleButtons();
     };
+    function toggleButtons(){
+        var disabled = 'disabled';
+        [btnStart,btnStop].forEach(function (button) {
+            button.getAttribute(disabled) ?
+                button.removeAttribute(disabled)
+                : button.setAttribute(disabled, disabled);
+        });
+
+    }
 };
