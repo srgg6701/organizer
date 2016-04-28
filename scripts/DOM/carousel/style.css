@@ -1,0 +1,53 @@
+#btns-carousel-container{
+    display: table;
+    margin: 20px auto auto;
+}
+#carousel-box{
+    box-shadow: 0 0 75px 0 rgba(0,0,0,0.15);
+    height: 200px;
+    margin: 100px auto auto;
+    max-width: 400px;
+    overflow: hidden;
+    /*outline: solid 3px #ddd;*/
+    position: relative;
+}
+#carousel-box >section{
+    height: 100%;
+    left: -100%;
+    position: absolute;
+    width: 500%;
+}
+#carousel-box div{
+    float: left;
+    font-size: 36px;
+    font-family: Verdana, Tahoma, Serif;
+    font-weight: bold;
+    height: 100%;
+    line-height: 200px;
+    text-align: center;
+    width: 20%;
+}
+div.bg-1{
+    background-color: brown;
+    color: white;
+}
+div.bg-2{
+    background-color: #bccff9;
+}
+div.bg-3{
+    background-color: #c6Ee00;
+}
+div.bg-4{
+    background-color: #00b0e8;
+}
+div.bg-5{
+    background-color: black;
+    color: white;
+}
+div.bg-6{
+    background-color: rebeccapurple;
+    color: white;
+}
+div.bg-7{
+    background-color: violet;
+}
