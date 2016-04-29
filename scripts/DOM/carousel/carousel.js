@@ -1,3 +1,5 @@
+// todo: try convert moving units from px to %%
+// todo: resolve a problem with keeping sizes relative. Probably depends on the todo above
 window.onload = function(){
     var btnStart = document.getElementById('btn-carousel-start'),
         btnStop = document.getElementById('btn-carousel-stop'),
@@ -18,6 +20,9 @@ window.onload = function(){
         tryCarouselRun,
         outerTm;
 
+    /**
+     * Moves a single *slide*
+     */
     function innerLoop(){
         console.log('%cinnerLoop', 'color:blue');
         //console.groupCollapsed('start innerLoop');
