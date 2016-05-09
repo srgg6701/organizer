@@ -11,12 +11,12 @@ require(['getData', 'getDataOnLoad', 'getPromiseNoJson', 'getPromiseTimeout'],
             });
         }
 
-        console.log({
+        /*console.log({
             getData:getData,
             getDataOnLoad:getDataOnLoad,
             getPromiseNoJson:getDataOnLoad,
             getPromiseTimeout:getPromiseTimeout
-        });
+        });*/
 
         handleNodes('button', function (item) {
             item.addEventListener('click', function () {
@@ -32,4 +32,6 @@ require(['getData', 'getDataOnLoad', 'getPromiseNoJson', 'getPromiseTimeout'],
         handleNodes('#btn-promise-no-json', function (item) {
             item.addEventListener('click', getPromiseNoJson);
         });
+
+
     });
