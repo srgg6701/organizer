@@ -9,25 +9,15 @@
  toHaveBeenCalled, toHaveBeenCalledTimes,
  toThrow, toThrowError
  */
-xdescribe('All the tests', function(){
+/*xdescribe('All the tests', function(){
     it('Should work', function(){
         expect(2*2).toBe(4);
     });
-});
+});*/
 
 describe("Should count", function(){
     it("Check sum", function(){
         expect(1+1).toBe(2);
-    });
-});
-
-describe("jQuery tests", function () {
-    var $=jQuery;
-    it("Should show jQuery", function () {
-        //console.log('jQuery', jQuery);
-        //expect(jQuery).not.toBe(null);
-        expect($('<input type="checkbox" checked="checked"/>')).toBeChecked();
-        expect($('<div><ul></ul><h1>header</h1></div>')).toContainHtml('<ul></ul>')
     });
 });
 
