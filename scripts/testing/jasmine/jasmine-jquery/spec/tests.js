@@ -6,12 +6,9 @@ describe("Should count", function(){
 });
 
 describe("jQuery tests", function () {
-    console.log('$', $);
-
-    /*var $=jQuery;*/
+    //console.log('$', $);
 
     it("Should find jQuery", function () {
-        //console.log('jQuery', jQuery);
         expect($).not.toBeNull();
     });
     describe('jquery-jasmine plugin', function() {
@@ -25,11 +22,11 @@ describe("jQuery tests", function () {
             expect('click').toHaveBeenTriggeredOn('#elem');
         });
     });
-    /*it("Should find checked box", function(){
+    it("Should find checked box", function(){
         expect($('<input type="checkbox" checked="checked"/>')).toBeChecked();
     });
     it("Should find inner list", function(){
         expect($('<div><ul></ul><h1>header</h1></div>')).toContainHtml('<ul></ul>')
-    });*/
+    });
 });
 
