@@ -1,0 +1,1 @@
+$(function(){var o={name:"myTestObj"};console.log("stuff",{ob:o,todo:"try"})});
