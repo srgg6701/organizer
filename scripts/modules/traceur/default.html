@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Traceur</title>
+    <script src="lib/traceur.js"></script>
+    <script src="lib/BrowserSystem.js"></script>
+    <script src="lib/bootstrap.js"></script>
+    <script>
+        //traceur.options.experimental = true;
+    </script>
+    <script type="module">
+        import {Employee} from './employee.js';
+        var e = new Employee('Srgg'),
+            contentBox = document.getElementById('content2');
+        contentBox.innerHTML=e.doWork();
+
+        import './greeter.js';
+        //import './employee.js';
+    </script>
+    <script>
+        //window.System = new traceur.runtime.BrowserTraceurLoader();
+        //System.import('./greeter.js');
+    </script>
+</head>
+<body>
+<h3 id="main-header">Traceur should work!</h3>
+<div id="content"></div>
+<div id="content2"></div>
+</body>
+</html>
