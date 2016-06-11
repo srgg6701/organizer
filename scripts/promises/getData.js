@@ -5,7 +5,10 @@ define(function(){
             xhr.open('get', '../data/data.json', true);
             xhr.onreadystatechange = function(){
                 if(xhr.readyState!==4) return false;
-                if(xhr.status!==200) return false;
+                if(xhr.status!==200) {
+                    reject(Error('Network error'));
+                    return false;
+                }
                 if(xhr.responseText){
                     resolve(xhr.responseText);
                 }else {

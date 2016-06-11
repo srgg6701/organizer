@@ -1,0 +1,1 @@
+define({ who: "slave" });

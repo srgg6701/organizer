@@ -1,9 +1,17 @@
 define(function(){
     return function getPromiseNoJson(){
         var jsonPromise = new Promise(function(resolve, reject) {
-            // JSON.parse throws an error if you feed it some
-            // invalid JSON, so this implicitly rejects:
-            resolve(JSON.parse("This ain't JSON"));
+            var xhr = new XMLHttpRequest();
+            xhr.open('get', 'fake.json');
+            xhr.onload = function(){
+                if(xhr.status==200){
+                    // If there was some file, then you get it. But alas...
+                    resolve(xhr.responseText);
+                }else{
+                    reject(Error(xhr.statusText));
+                }
+            };
+            xhr.onerror(Error(xhr.error));
         });
 
         jsonPromise.then(function(data) {
@@ -11,7 +19,7 @@ define(function(){
             console.log("It worked!", data);
         }).catch(function(err) {
             // Instead, this happens:
-            console.log("It failed!", err);
+            console.log("It failed! No any file available.", err);
         });
     };
 });

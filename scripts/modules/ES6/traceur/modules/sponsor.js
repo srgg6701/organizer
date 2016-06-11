@@ -1,11 +1,11 @@
-export class Employee {
+export class Sponsor{
     constructor(name){
         this._name = name;
     }
     get name(){
         return this._name;
     }
-    doWork(){
-        return `${this.name} is working`;
+    sayName(){
+        console.log(`Sponsor name is ${this.name}`);
     }
 }

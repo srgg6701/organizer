@@ -6,17 +6,19 @@
     <script src="lib/traceur.js"></script>
     <script src="lib/BrowserSystem.js"></script>
     <script src="lib/bootstrap.js"></script>
-    <script>
-        //traceur.options.experimental = true;
-    </script>
+    <script>/*traceur.options.experimental = true;*/</script>
     <script type="module">
-        import {Employee} from './employee.js';
+        import {Sponsor as sp} from './modules/sponsor.js';
+        import './modules/greeter.js';
+        import {Employee, somethingFun} from './modules/employee.js';
+
         var e = new Employee('Srgg'),
             contentBox = document.getElementById('content2');
         contentBox.innerHTML=e.doWork();
+        somethingFun('imported successfully!', 'orange');
 
-        import './greeter.js';
-        //import './employee.js';
+        (new sp('Mammone')).sayName();
+
     </script>
     <script>
         //window.System = new traceur.runtime.BrowserTraceurLoader();
