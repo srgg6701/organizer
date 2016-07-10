@@ -12,6 +12,9 @@ var util = require('util'),
 var DEFAULT_PORT = 8000;
 
 function main(argv) {
+    // argv: <PATH>.node.exe, <PATH>.<server>.js
+    console.log('url', url.Url());
+    // return false;
     new HttpServer({
         'GET':createServlet(StaticServlet),
         'POST':createServlet(StaticServlet),
