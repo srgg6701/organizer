@@ -1,0 +1,9 @@
+iframe{
+    border: solid 3px #ddd;
+}
+.block{
+    display: block;
+}
+.table{
+    display: table;
+}
