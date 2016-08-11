@@ -1,5 +1,7 @@
+// see its environment here: C:\Users\srgg6701\Documents\Projects\JS\miscellanous\CrossDomainMessaging\example2\server2.js
 const   http = require('http'),
-        fs = require('fs');
+        fs = require('fs'),
+        port = 8080;
 
 http.createServer(function (request, response) {
     var exts, ext, type = 'text';
@@ -50,4 +52,4 @@ http.createServer(function (request, response) {
             });
         }
     })
-}).listen(8080, function(){console.log('Server is run!')});
+}).listen(port, function(){console.log('Server is run!')});
