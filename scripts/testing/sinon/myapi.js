@@ -14,6 +14,17 @@ var myapi = {
         };
         xhr.send();
     },
+    get2: function (callback, data) {
+        $.ajax('data.json', {
+            success:callback(data),
+            error: function(){
+                console.log('Failed');
+            },
+            complete: function(){
+                console.log('Completed');
+            }
+        });
+    },
     post: function (data, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://jsonplaceholder.typicode.com/posts', true);
