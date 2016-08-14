@@ -1,7 +1,12 @@
 
-describe("Test block 1", function () {
-    it("Initial checking", function () {
+describe("Test App", function () {
+    it("Background checking", function () {
         console.log('expectations here');
-        expect(1+1==2).to.be.true;
+        var div = $('<div/>')[0];
+        App({
+            root: div,
+            'background-color':'green'
+        });
+        expect(div.style.backgroundColor).to.equal('green');
     });
 });
