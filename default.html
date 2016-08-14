@@ -6,14 +6,63 @@
     <script src="scripts/_temp.js"></script>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css.map">
+    <style>
+        #shortland {
+            background-image: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+            height: 350px;
+            min-width: 240px;
+            width: 75%;
+        }
+    </style>
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script>
+        function calcu() {
+            var nd = new Date;
+            while (new Date - nd < 2000);
+            console.log(nd, new Date().getTime());
+        }
+        +function justHello() {
+            console.log('Just hello, dude!');
+        }();
+        $(function () {
+            calcu();
+            //var divs = $('#body-here div');
+            var divs = $('#body-here').find('div');
+            $('#btn-home-default').on('click.space1', function(){
+                console.log('The Space 1 was used intensively!');
+            });
+        });
+    </script>
 </head>
-<body>
+<body id="body-here">
 <div class="container">
     <div class="row col-lg-10 col-md-10 col-sm-12 col-xs-11">
         <h3 id="header">Default file</h3>
+        <p>Where you are, Dude?</p>
+        <section>
+            <p>Are you still alive?</p>
+            <blockquote>Don't hope!</blockquote>
+        </section>
         <div id="output"></div>
+        <div id="shortland"/>
+        <span id="btn-home-default">
+            <button id="btn-default" class="btn-default">Default btn</button>
+            <button id="btn-special" class="btn-danger">Special btn</button>
+        </span>
+        <span id="btn-home-special">
+            <button id="btn-special-default" class="btn-info">Default btn</button>
+            <button id="btn-special-special" class="btn-primary">Special btn</button>
+        </span>
     </div>
+    <button class="btn-success">display event.namespace</button>
+    <script>
+        $("p").on("test.something", function(event) {
+            console.log( event.namespace );
+        });
+        $("button.btn-success").click(function(event) {
+            $("p").trigger( "test.something" );
+        });
+    </script>
 </div>
 </body>
 </html>
