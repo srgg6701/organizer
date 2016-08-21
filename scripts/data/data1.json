@@ -1,0 +1,18 @@
+{
+    "name": "Amino",
+    "last_name": "Acid",
+    "area": "Chemistry",
+    "params": {
+        "score": 15,
+        "category": "science",
+        "age": "eternal"
+    },
+    "name1": "Amino",
+    "last_name1": "Acid",
+    "area1": "Chemistry",
+    "params1": {
+        "score1": 15,
+        "category1": "science",
+        "age1": "eternal"
+    }
+}
