@@ -1,0 +1,7 @@
+- var arr = ['<a>','<b>','<c>']
+ul
+  - for (var i = 0; i< arr.length; i++)
+    li
+      span= i
+      span!="unescaped: " + arr[i] + " vs. "
+      span= "escaped: " + arr[i]

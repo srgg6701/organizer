@@ -1,95 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Battle!!!</title>
+    <title>Battle forever, aha!!!</title>
     <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css.map">
-    <style>
-        .redGuy, .blueGuy{
-            height: 200px;
-            position: relative;
-            width: 100px;
-        }
-        .bullet{
-            background-color: green;
-        }
-        .redGuy{
-            background-color: red;
-        }
-        .blueGuy{
-            background-color: blue;
-            z-index: 2;
-        }
-        #bullet{
-            display: none;
-            height: 4px;
-            width: 8px;
-            position: absolute;
-            top: 100px;
-            left: 100px;
-            z-index: 1;
-        }
-        #redGuy{
-            float: left;
-        }
-        #blueGuy{
-            float: right;
-        }
-    </style>
+    <link rel="stylesheet" href="css/battlefield.css">
     <script src="../../bower_components/jquery/dist/jquery.js"></script>
-    <script>
-        $(function(){
-            var $redGuy = $('#redGuy'),
-                $blueGuy = $('#blueGuy'),
-                $bullet = $('#bullet'),
-                bullet = {
-                    shot: function(){
-                        bullet.shot = $.Deferred();
-                        $bullet.show().animate({left:'100%'},1000, bullet.shotFinished);
-                        return bullet.shot;
-                    },
-                    shotFinished: function(){
-                        bullet.shot.resolve();
-                    }
-                },
-                redGuy = {
-                    shootBlue: function(){
-                        return bullet.shot();
-                    }
-                },
-                blueGuy = {
-                    die: function(){
-                        $blueGuy.fadeOut(2000, function(){
-                            console.log('%cYou killed me, partner!', 'color:darkred; font-weight:bold');
-                        });
-                    },
-                    shotFired: function(shot){
-                        shot.done(blueGuy.die);
-                        shot.always(finishCombat);
-                        shot.reject();
-                    }
-                },
-                startCombat = function(){
-                    blueGuy.shotFired(redGuy.shootBlue());
-                    shot.done(function(){
-                        console.log('Battle resolved!');
-                    });
-                    shot.fail(function(){
-                        console.log('Battle rejected!');
-                    });
-                },
-                finishCombat = function(){
-                    console.log('Make love, not war©!');
-                };
-            $redGuy.on('click', startCombat);
-        });
-
-    </script>
+    <script src="js/battlefield.js"></script>
 </head>
+
 <body>
-    <div id="redGuy" class="redGuy">&nbsp;</div>
-    <div id="blueGuy" class="blueGuy">&nbsp;</div>
+    <div id="redGuy" class="redGuy">First div!</div>
+    <div id="blueGuy" class="blueGuy">Second one!</div>
     <div id="bullet" class="bullet">&nbsp;</div>
 </body>
+
 </html>

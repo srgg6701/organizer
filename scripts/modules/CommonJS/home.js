@@ -1,4 +1,7 @@
 var x = require('./one').x,
-    y = require('./two').y;
+    two = require('./two'),
+    y = two.y;
 
-console.log('x, y:', x+', '+y);
+window.say = two.say;
+
+console.log('x, y:', x + ', ' + y);
