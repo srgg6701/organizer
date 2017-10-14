@@ -1,3 +1,6 @@
-/**
- * Created by srgg6701 on 21.08.2016.
- */
+var template = require('../sources/default.jade');
+
+exports.helloWorld = function () {
+    var html = template({greetingText:'Hello browserify world!'});
+    console.log('got html: ', html);
+}

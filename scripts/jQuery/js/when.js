@@ -13,6 +13,7 @@ $(function() {
         var tDef = $.Deferred(),
             tmt = setTimeout(function() {
                 console.log('trustMe is finished');
+                // переведёт Deferred в состояние resolved
                 tDef.resolve();
             }, delay);
         return tDef;
@@ -44,4 +45,10 @@ $(function() {
 
     $('#btn-run-waiter').on('click', runWaiter);
     $('#btn-load-data').on('click', loadData);
-})
+});
+
+$.when(def1, def2).done(function() {
+    // code...
+}).fail(function() {
+    // code
+});
